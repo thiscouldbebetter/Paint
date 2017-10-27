@@ -1,0 +1,183 @@
+
+function ToolSelect()
+{
+	this.name = "Select";
+}
+
+{
+	// event handlers
+
+	ToolSelect.prototype.copy = function()
+	{
+		this.copyOrCut(false);	
+	}
+
+	ToolSelect.prototype.cut = function()
+	{
+		this.copyOrCut(true);	
+	}
+
+	ToolSelect.prototype.copyOrCut = function(cutRatherThanCopy)
+	{
+		var view = this.parentView;
+		var layerSelected = view.layerSelected();
+		var selection = view.selection;
+		var layerForClipboard = new Layer
+		(
+			"layerClipboard",
+			selection.size.clone(),
+			new Coords(0, 0) // offset
+		);
+
+		layerForClipboard.display.drawOther
+		(
+			layerSelected.display, 
+			new Coords(0, 0), // target pos
+			selection.pos,
+			selection.size
+		);
+
+		if (cutRatherThanCopy == true)
+		{
+			layerSelected.display.clearRectangle
+			(
+				selection.pos.clone().subtract
+				(
+					layerSelected.offset
+				),
+				selection.size
+			);
+		}
+
+		selection.pos = null;
+
+		view.layerForClipboard = layerForClipboard;
+
+		view.controlUpdate();
+	}
+
+	ToolSelect.prototype.paste = function()
+	{
+		var view = this.parentView;
+		var layerForClipboard = view.layerForClipboard;
+		if (layerForClipboard != null)
+		{
+			var layersAll = view.layers;
+			layersAll.push(layerForClipboard);
+			view.layerForClipboard = null;
+
+			var toolLayers = view.tools["Layers"];
+			toolLayers.layerIndexSelected = layersAll.length - 1;
+			toolLayers.controlUpdate();
+
+			view.controlUpdate();
+		}
+	}
+
+	ToolSelect.prototype.processMouseDown = function()
+	{
+		var layerSelected = this.parentView.layerSelected();
+
+		var selection = this.parentView.selection;
+		var mousePos = this.parentView.mousePos;
+
+		if (selection.pos == null)
+		{
+			selection.pos = mousePos.clone();
+			selection.size = new Coords(0, 0);
+			selection.isComplete = false;
+			selection.isBeingMoved = false;
+		}
+		else if (mousePos.isInRangeMinMax(selection.pos, selection.max()) == true)
+		{
+			selection.isBeingMoved = true;
+		}
+		else
+		{
+			selection.pos = null;	
+		}
+	
+		this.parentView.controlUpdate();
+	}
+
+	ToolSelect.prototype.processMouseMove = function()
+	{
+		var selection = this.parentView.selection;
+	
+		if (selection.pos == null)
+		{
+			// do nothing
+		}
+		else if (selection.isComplete == false)
+		{
+			selection.size.overwriteWith
+			(
+				this.parentView.mousePos
+			).subtract
+			(
+				selection.pos
+			);
+		}
+		else if (selection.isBeingMoved == true)
+		{
+			var mousePos = this.parentView.mousePos;
+			var mousePosPrev = this.parentView.mousePosPrev;
+			var mouseMove = mousePos.clone().subtract(mousePosPrev);
+			selection.pos.add(mouseMove);
+		}
+
+		this.parentView.controlUpdate();
+	}
+
+	ToolSelect.prototype.processMouseUp = function()
+	{
+		var selection = this.parentView.selection;
+		selection.isComplete = true;
+
+		this.parentView.controlUpdate();
+	}
+
+	ToolSelect.prototype.processSelection = function()
+	{
+		this.parentView.toolSelected = this;
+	}
+
+	// controllable
+
+	ToolSelect.prototype.controlUpdate = function()
+	{
+		if (this.control == null)
+		{
+			var returnValue = new ControlContainer
+			(
+				"containerSelect",
+				[
+					new ControlButton
+					(
+						this.name,
+						this.processSelection.bind(this)
+		 			),
+					new ControlButton
+					(
+						"Cut",
+						this.cut.bind(this)
+		 			),
+					new ControlButton
+					(
+						"Copy",
+						this.copy.bind(this)
+		 			),
+					new ControlButton
+					(
+						"Paste",
+						this.paste.bind(this)
+		 			),
+				]
+			);
+	
+			this.control = returnValue;	
+		}
+
+		return this.control;
+	}
+}
