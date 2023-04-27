@@ -1,16 +1,16 @@
 
-
-function ControlNumberBox(name, value, change)
+class ControlNumberBox
 {
-	this.name = name;
-	this.value = value;
-	this.change = change;
-}
+	constructor(name, value, change)
+	{
+		this.name = name;
+		this.value = value;
+		this.change = change;
+	}
 
-{
 	// dom
 
-	ControlNumberBox.prototype.domElementUpdate = function()
+	domElementUpdate()
 	{
 		if (this.domElement == null)
 		{
@@ -29,7 +29,7 @@ function ControlNumberBox(name, value, change)
 
 	// events
 
-	ControlNumberBox.prototype.handleEventChanged = function(event)
+	handleEventChanged(event)
 	{
 		var valueAsInt = parseInt(event.target.value);
 		this.value = valueAsInt;

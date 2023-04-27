@@ -1,25 +1,26 @@
 
-function ToolViewSize()
+class ToolViewSize
 {
-	this.name = "ViewSize";
-}
+	constructor()
+	{
+		this.name = "ViewSize";
+	}
 
-{
 	// event handlers
 
-	ToolViewSize.prototype.viewSizeXChanged = function(valueToSet)
+	viewSizeXChanged(valueToSet)
 	{
 		this.parentView.size.x = valueToSet;
 		this.viewSizeSet();
 	}
 
-	ToolViewSize.prototype.viewSizeYChanged = function(valueToSet)
+	viewSizeYChanged(valueToSet)
 	{
 		this.parentView.size.y = valueToSet;
 		this.viewSizeSet();
 	}
 
-	ToolViewSize.prototype.viewSizeSet = function()
+	viewSizeSet()
 	{
 		var size = this.parentView.size;
 
@@ -32,13 +33,13 @@ function ToolViewSize()
 		{
 			var layer = layers[i];
 			layer.display.sizeSet(size);
-			displayMain.drawOther(layer.display, Coords.Instances.Zeroes);
+			displayMain.drawOther(layer.display, Coords.Instances().Zeroes);
 		}
 	}
 
 	// control
 
-	ToolViewSize.prototype.controlUpdate = function()
+	controlUpdate()
 	{
 		if (this.control == null)
 		{

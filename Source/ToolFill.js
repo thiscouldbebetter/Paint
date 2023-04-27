@@ -1,13 +1,14 @@
 
-function ToolFill()
+class ToolFill
 {
-	this.name = "Fill";
-}
+	constructor()
+	{
+		this.name = "Fill";
+	}
 
-{
 	// event handlers
 
-	ToolFill.prototype.processSelection = function()
+	processSelection()
 	{
 		var tools = this.parentView.tools;
 
@@ -16,15 +17,14 @@ function ToolFill()
 		var color = tools["ColorPalette"].colorSelected;
 		var size = this.parentView.size;
 
-		display.drawRectangle(Coords.Instances.Zeroes, size, color);
+		display.drawRectangle(Coords.Instances().Zeroes, size, color);
 
 		this.parentView.controlUpdate();
-
 	}
 
 	// controllable
 
-	ToolFill.prototype.controlUpdate = function()
+	controlUpdate()
 	{
 		if (this.control == null)
 		{

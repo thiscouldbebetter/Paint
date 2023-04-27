@@ -1,12 +1,13 @@
 
-function ControlFileUploader(name, change)
+class ControlFileUploader
 {
-	this.name = name;
-	this.change = change;
-}
+	constructor(name, change)
+	{
+		this.name = name;
+		this.change = change;
+	}
 
-{
-	ControlFileUploader.prototype.domElementUpdate = function()
+	domElementUpdate()
 	{
 		if (this.domElement == null)
 		{
@@ -21,7 +22,7 @@ function ControlFileUploader(name, change)
 		return this.domElement;
 	}
 
-	ControlFileUploader.prototype.handleEventChanged = function(event)
+	handleEventChanged(event)
 	{
 		var fileToLoad = event.target.files[0];
 
@@ -41,7 +42,7 @@ function ControlFileUploader(name, change)
 		}
 	}
 
-	ControlFileUploader.prototype.handleEventChanged_FileLoaded = function(event)
+	handleEventChanged_FileLoaded(event)
 	{
 		var fileReader = event.target;
 		var file = fileReader.file;
@@ -58,6 +59,6 @@ function ControlFileUploader(name, change)
 		{
 			this.change(fileName, fileType, fileContentAsBytes);
 		}
-
 	}
+
 }

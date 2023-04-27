@@ -1,21 +1,22 @@
 
-function Selection(pos, size)
+class Selection
 {
-	this.pos = pos;
-	this.size = size;
-	this._max = new Coords();
+	constructor(pos, size)
+	{
+		this.pos = pos;
+		this.size = size;
+		this._max = new Coords();
 
-	this.color = Color.Instances.Cyan; // todo
-}
+		this.color = Color.Instances().Cyan; // todo
+	}
 
-{
-	Selection.prototype.drawToDisplay = function(display)
+	drawToDisplay(display)
 	{
 		display.drawRectangle(this.pos, this.size, null, this.color);
 	}
 
-	Selection.prototype.max = function()
+	max()
 	{
 		return this._max.overwriteWith(this.pos).add(this.size);
-	}	
+	}
 }

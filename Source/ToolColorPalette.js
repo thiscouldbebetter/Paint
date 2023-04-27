@@ -1,25 +1,26 @@
 
-function ToolColorPalette()
+class ToolColorPalette
 {
-	this.name = "ColorPalette";
-	this.colorSelected = Color.Instances.Black;
-}
+	constructor()
+	{
+		this.name = "ColorPalette";
+		this.colorSelected = Color.Instances().Black;
+	}
 
-{
 	// event handlers
 
-	ToolColorPalette.prototype.colorSetByName = function(colorName)
+	colorSetByName(colorName)
 	{
-		this.colorSelected = Color.Instances._All[colorName];
+		this.colorSelected = Color.Instances()._All[colorName];
 	}
 
 	// controllable
 
-	ToolColorPalette.prototype.controlUpdate = function()
+	controlUpdate()
 	{
 		if (this.control == null)
 		{
-			var colors = Color.Instances._All;
+			var colors = Color.Instances()._All;
 
 			var returnValue = new ControlContainer
 			(

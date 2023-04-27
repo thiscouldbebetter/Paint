@@ -1,15 +1,11 @@
 
 // classes
 
-function Base64Encoder()
-{
-	// static class
-}
-
+class Base64Encoder
 {
 	// constants
 
-	Base64Encoder.Base64DigitsAsString = 
+	static Base64DigitsAsString = 
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ" 
 		+ "abcdefghijklmnopqrstuvwxyz"
 		+ "0123456789"
@@ -17,7 +13,7 @@ function Base64Encoder()
 
 	// static methods
 
-	Base64Encoder.base64StringToBytes = function(base64StringToConvert)
+	static base64StringToBytes(base64StringToConvert)
 	{
 		// Convert each four sets of six bits (sextets, or Base 64 digits)
 		// into three sets of eight bits (octets, or bytes)
@@ -66,7 +62,7 @@ function Base64Encoder()
 			returnBytes.push((valueToEncode >> 16) & 0xFF);
 			returnBytes.push((valueToEncode >> 8) & 0xFF);
 			returnBytes.push((valueToEncode) & 0xFF);
-		}	
+		}
 
 		var d = numberOfFullSets * base64DigitsPerSet;
 
@@ -100,7 +96,7 @@ function Base64Encoder()
 		return returnBytes;
 	}
 
-	Base64Encoder.bytesToBase64String = function(bytesToEncode)
+	static bytesToBase64String(bytesToEncode)
 	{
 		// Encode each three sets of eight bits (octets, or bytes)
 		// as four sets of six bits (sextets, or Base 64 digits)
@@ -129,7 +125,7 @@ function Base64Encoder()
 			returnString += base64DigitsAsString[((valueToEncode & 0x03F000) >>> 12)];
 			returnString += base64DigitsAsString[((valueToEncode & 0x000FC0) >>> 6)];
 			returnString += base64DigitsAsString[((valueToEncode & 0x00003F))];
-		}	
+		}
 
 		var b = numberOfFullSets * bytesPerSet;
 

@@ -1,11 +1,7 @@
 
-function Control()
+class Control
 {
-	// static class
-}
-
-{
-	Control.controllablesToControls = function(controllables)
+	static controllablesToControls(controllables)
 	{
 		var returnValues = [];
 

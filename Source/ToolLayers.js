@@ -1,16 +1,17 @@
 
 
-function ToolLayers()
+class ToolLayers
 {
-	this.name = "Layers";
-	this.layerIndexSelected = 0;
-	this.moveStepDistance = 10;
-}
+	constructor()
+	{
+		this.name = "Layers";
+		this.layerIndexSelected = 0;
+		this.moveStepDistance = 10;
+	}
 
-{
 	// event handlers
 
-	ToolLayers.prototype.layerAdd = function()
+	layerAdd()
 	{
 		var layersAll = this.parentView.layers;
 		var layerNewIndex = layersAll.length;
@@ -29,7 +30,7 @@ function ToolLayers()
 		this.controlUpdate();
 	}
 
-	ToolLayers.prototype.layerClone = function()
+	layerClone()
 	{
 		var layerToClone = this.parentView.layerSelected();	
 		var layersAll = this.parentView.layers;
@@ -49,7 +50,7 @@ function ToolLayers()
 		this.controlUpdate();
 	}
 
-	ToolLayers.prototype.layerSelectedHideOrShow = function()
+	layerSelectedHideOrShow()
 	{
 		var layerSelected = this.parentView.layerSelected();
 		layerSelected.isVisible = (layerSelected.isVisible == false);
@@ -57,12 +58,12 @@ function ToolLayers()
 		this.parentView.controlUpdate();
 	}
 
-	ToolLayers.prototype.layerSelectedLower = function(offset)
+	layerSelectedLower(offset)
 	{
 		this.layerSelectedRaiseOrLower(-1);
 	}
 
-	ToolLayers.prototype.layerSelectedMergeDown = function()
+	layerSelectedMergeDown()
 	{
 		var layerSelected = this.parentView.layerSelected();
 		var layersAll = this.parentView.layers;
@@ -83,7 +84,7 @@ function ToolLayers()
 		}
 	}
 
-	ToolLayers.prototype.layerSelectedMove = function(direction)
+	layerSelectedMove(direction)
 	{
 		var offset = direction.multiplyScalar(this.moveStepDistance);
 		var layerSelected = this.parentView.layerSelected();
@@ -91,32 +92,32 @@ function ToolLayers()
 		this.parentView.controlUpdate();
 	}
 
-	ToolLayers.prototype.layerSelectedMoveDown = function()
+	layerSelectedMoveDown()
 	{
 		this.layerSelectedMove(new Coords(0, 1));
 	}
 
-	ToolLayers.prototype.layerSelectedMoveLeft = function()
+	layerSelectedMoveLeft()
 	{
 		this.layerSelectedMove(new Coords(-1, 0));
 	}
 
-	ToolLayers.prototype.layerSelectedMoveRight = function()
+	layerSelectedMoveRight()
 	{
 		this.layerSelectedMove(new Coords(1, 0));
 	}
 
-	ToolLayers.prototype.layerSelectedMoveUp = function()
+	layerSelectedMoveUp()
 	{
 		this.layerSelectedMove(new Coords(0, -1));
 	}
 
-	ToolLayers.prototype.layerSelectedRaise = function(offset)
+	layerSelectedRaise(offset)
 	{
 		this.layerSelectedRaiseOrLower(1);
 	}
 
-	ToolLayers.prototype.layerSelectedRaiseOrLower = function(offset)
+	layerSelectedRaiseOrLower(offset)
 	{
 		var layerSelected = this.parentView.layerSelected();
 
@@ -133,7 +134,7 @@ function ToolLayers()
 		}
 	}
 
-	ToolLayers.prototype.layerSelectedRemove = function()
+	layerSelectedRemove()
 	{
 		var layerToRemove = this.parentView.layerSelected();
 
@@ -147,7 +148,7 @@ function ToolLayers()
 		this.parentView.controlUpdate();
 	}
 
-	ToolLayers.prototype.layerSelectedRename = function()
+	layerSelectedRename()
 	{
 		var layerSelected = this.parentView.layerSelected();
 		var containerRename = this.control.children["containerRename"];
@@ -169,20 +170,20 @@ function ToolLayers()
 		}
 	}
 
-	ToolLayers.prototype.layerSetByIndex = function(valueToSet)
+	layerSetByIndex(valueToSet)
 	{
 		this.layerIndexSelected = valueToSet;
 		this.parentView.controlUpdate();
 	}
 
-	ToolLayers.prototype.moveStepDistanceChanged = function(valueToSet)
+	moveStepDistanceChanged(valueToSet)
 	{
 		this.moveStepDistance = parseInt(valueToSet);
 	}
 
 	// controllable
 
-	ToolLayers.prototype.controlUpdate = function()
+	controlUpdate()
 	{
 		if (this.control == null)
 		{

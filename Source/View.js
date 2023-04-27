@@ -1,40 +1,42 @@
 
-function View(size, toolNameToSelectInitial, tools)
+class View
 {
-	this.size = size;
-	this.tools = tools.addLookups("name");
-
-	for (var i = 0; i < this.tools.length; i++)
+	constructor(size, toolNameToSelectInitial, tools)
 	{
-		var tool = this.tools[i];
-		tool.parentView = this;
+		this.size = size;
+		this.tools = tools.addLookups("name");
+
+		for (var i = 0; i < this.tools.length; i++)
+		{
+			var tool = this.tools[i];
+			tool.parentView = this;
+		}
+
+		this.toolSelected = this.tools[toolNameToSelectInitial];
+
+		this.layers = 
+		[
+			new Layer("Layer0", size, new Coords(0, 0)),
+		];
+
+		this.layers.addLookups("name");
+
+		for (var i = 0; i < this.layers.length; i++)
+		{
+			var layer = this.layers[i];
+			layer.parentView = this;
+		}
+
+		this.isMouseDown = false;
+		this.mousePos = new Coords(0, 0);
+		this.mousePosPrev = new Coords(0, 0);
+
+		this.selection = new Selection();
 	}
 
-	this.toolSelected = this.tools[toolNameToSelectInitial];
-
-	this.layers = 
-	[
-		new Layer("Layer0", size, new Coords(0, 0)),
-	];
-
-	this.layers.addLookups("name");
-
-	for (var i = 0; i < this.layers.length; i++)
-	{
-		var layer = this.layers[i];
-		layer.parentView = this;
-	}
-
-	this.isMouseDown = false;
-	this.mousePos = new Coords(0, 0);
-	this.mousePosPrev = new Coords(0, 0);
-
-	this.selection = new Selection();
-}
-{
 	// static methods
 
-	View.imageURLForAlphaZeroBuild = function()
+	static imageURLForAlphaZeroBuild()
 	{
 		var imageSizeInPixels = new Coords(32, 32);
 		var imageSizeInPixelsHalf = imageSizeInPixels.clone().divideScalar(2);
@@ -45,12 +47,12 @@ function View(size, toolNameToSelectInitial, tools)
 
 		var graphicsForCanvas = canvas.getContext("2d");
 
-		graphicsForCanvas.fillStyle = Color.Instances.Gray.systemColor;
+		graphicsForCanvas.fillStyle = Color.Instances().Gray.systemColor;
 		graphicsForCanvas.fillRect
 		(
 			0, 0, imageSizeInPixels.x, imageSizeInPixels.y
 		);
-		graphicsForCanvas.fillStyle = Color.Instances.GrayDark.systemColor;
+		graphicsForCanvas.fillStyle = Color.Instances().GrayDark.systemColor;
 		graphicsForCanvas.fillRect
 		(
 			0, 0, imageSizeInPixelsHalf.x, imageSizeInPixelsHalf.y
@@ -70,7 +72,7 @@ function View(size, toolNameToSelectInitial, tools)
 
 	// instance methods
 
-	View.prototype.layerSelected = function()
+	layerSelected()
 	{
 		var layerIndexSelected = this.tools["Layers"].layerIndexSelected;
 		var returnValue = this.layers[layerIndexSelected]; 
@@ -79,8 +81,8 @@ function View(size, toolNameToSelectInitial, tools)
 
 	// event handlers
 
-	View.prototype.processMouseDown = function(event)
-	{		
+	processMouseDown(event)
+	{
 		event.preventDefault(); // otherwise the cursor changes
 
 		var boundingClientRect = 
@@ -95,19 +97,19 @@ function View(size, toolNameToSelectInitial, tools)
 		this.toolSelected.processMouseDown();
 	}
 
-	View.prototype.processMouseOver = function(event)
+	processMouseOver(event)
 	{
 		// do nothing
 	}
 
-	View.prototype.processMouseOut = function(event)
+	processMouseOut(event)
 	{
-		this.isMouseDown = false;		
+		this.isMouseDown = false;
 	}
 
-	View.prototype.processMouseMove = function(event)
+	processMouseMove(event)
 	{
-		if (this.isMouseDown == true)
+		if (this.isMouseDown)
 		{
 			this.mousePosPrev.overwriteWith(this.mousePos);
 			var boundingClientRect = 
@@ -119,16 +121,16 @@ function View(size, toolNameToSelectInitial, tools)
 			);
 			this.toolSelected.processMouseMove();
 		}
-	}	
+	}
 
-	View.prototype.processMouseUp = function(event)
+	processMouseUp(event)
 	{
 		this.isMouseDown = false;
 	}
 
 	// controllable
 
-	View.prototype.controlUpdate = function()
+	controlUpdate()
 	{ 
 		if (this.control == null)
 		{
@@ -143,9 +145,9 @@ function View(size, toolNameToSelectInitial, tools)
 				this.processMouseOver.bind(this),
 				this.processMouseUp.bind(this)
 			);
-	
+
 			var containerTools = new ControlContainer
-			(			
+			(
 				"containerTools",
 				Control.controllablesToControls(this.tools)
 			);
@@ -171,7 +173,7 @@ function View(size, toolNameToSelectInitial, tools)
 
 	// drawable
 
-	View.prototype.drawToDisplay = function(display)
+	drawToDisplay(display)
 	{
 		if (this.selection.pos != null)
 		{
@@ -180,7 +182,7 @@ function View(size, toolNameToSelectInitial, tools)
 				this.selection.pos,
 				this.selection.size,
 				null, // colorFill
-				Color.Instances.Cyan // colorBorder
+				Color.Instances().Cyan // colorBorder
 			);
 		}
 	}

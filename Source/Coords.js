@@ -1,50 +1,52 @@
 
-function Coords(x, y)
+class Coords
 {
-	this.x = x;
-	this.y = y;	
-}
+	constructor(x, y)
+	{
+		this.x = x;
+		this.y = y;	
+	}
 
-{
 	// instances
 
-	Coords.Instances = new Coords_Instances();
-
-	function Coords_Instances()
+	static Instances()
 	{
-		this.Zeroes = new Coords(0, 0);
+		if (Coords._instances == null)
+		{
+			Coords._instances = new Coords_Instances();
+		}
+		return Coords._instances;
 	}
 
 	// methods
 
-	Coords.prototype.add = function(other)
+	add(other)
 	{
 		this.x += other.x;
 		this.y += other.y;
 		return this;
 	}
 
-	
-	Coords.prototype.clone = function()
+	clone()
 	{
 		return new Coords(this.x, this.y);
 	}
 
-	Coords.prototype.divide = function(other)
+	divide(other)
 	{
 		this.x /= other.x;
 		this.y /= other.y;
 		return this;
 	}
 
-	Coords.prototype.divideScalar = function(scalar)
+	divideScalar(scalar)
 	{
 		this.x /= scalar;
 		this.y /= scalar;
 		return this;
 	}
 
-	Coords.prototype.isInRangeMinMax = function(min, max)
+	isInRangeMinMax(min, max)
 	{
 		var returnValue = 
 		(
@@ -57,43 +59,51 @@ function Coords(x, y)
 		return returnValue;
 	}
 
-	Coords.prototype.multiply = function(other)
+	multiply(other)
 	{
 		this.x *= other.x;
 		this.y *= other.y;
 		return this;
 	}
 
-	Coords.prototype.multiplyScalar = function(scalar)
+	multiplyScalar(scalar)
 	{
 		this.x *= scalar;
 		this.y *= scalar;
 		return this;
 	}
 
-	Coords.prototype.overwriteWith = function(other)
+	overwriteWith(other)
 	{
 		this.x = other.x;
 		this.y = other.y;
 		return this;
 	}
 
-	Coords.prototype.overwriteWithDimensions = function(x, y)
+	overwriteWithDimensions(x, y)
 	{
 		this.x = x;
 		this.y = y;
 		return this;
 	}
 
-	Coords.prototype.subtract = function(other)
+	subtract(other)
 	{
 		this.x -= other.x;
 		this.y -= other.y;
 		return this;
 	}
 
-	Coords.prototype.toString = function()
+	toString()
 	{
 		return "(" + this.x + "," + this.y + ")";
+	}
+}
+
+class Coords_Instances
+{
+	constructor()
+	{
+		this.Zeroes = new Coords(0, 0);
 	}
 }

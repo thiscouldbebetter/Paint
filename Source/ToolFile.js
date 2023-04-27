@@ -1,19 +1,20 @@
 
-function ToolFile()
+class ToolFile
 {
-	this.name = "FileSave";
-	this.fileNameToSaveAs = "Untitled";
-}
+	constructor()
+	{
+		this.name = "FileSave";
+		this.fileNameToSaveAs = "Untitled";
+	}
 
-{
 	// event handlers
 
-	ToolFile.prototype.processFileNameToSaveAsChange = function(event)
+	processFileNameToSaveAsChange(event)
 	{
 		this.fileNameToSaveAs = event.target.value;
 	}
 
-	ToolFile.prototype.processSaveAsPNG = function(event)
+	processSaveAsPNG(event)
 	{
 		var canvas = this.parentView.control.children["viewCanvas"].display.canvas;
 
@@ -41,7 +42,7 @@ function ToolFile()
 		link.click();
 	}
 
-	ToolFile.prototype.processSaveAsTAR = function(event)
+	processSaveAsTAR(event)
 	{
 		var fileNameToSaveAs = this.fileNameToSaveAs;
 		if (fileNameToSaveAs.toLowerCase().endsWith(".tar") == false)
@@ -81,7 +82,7 @@ function ToolFile()
 
 	// controllable
 
-	ToolFile.prototype.controlUpdate = function()
+	controlUpdate()
 	{
 		if (this.control == null)
 		{
@@ -139,7 +140,7 @@ function ToolFile()
 		return this.control;
 	}
 
-	ToolFile.prototype.fileToUploadChanged = function(fileName, fileType, fileContentAsBytes)
+	fileToUploadChanged(fileName, fileType, fileContentAsBytes)
 	{
 		if (fileContentAsBytes != null)
 		{
@@ -164,14 +165,13 @@ function ToolFile()
 				alert("Unrecognized file type!");
 			}
 		}
-
 	}
 
-	ToolFile.prototype.layerAddFromPNGAsBytes = function(fileContentAsBytes)
+	layerAddFromPNGAsBytes(fileContentAsBytes)
 	{
 		var fileContentAsBase64 = 
 			Base64Encoder.bytesToBase64String(fileContentAsBytes);
-							
+
 		var dataURL = "data:image/png;base64," + fileContentAsBase64;
 
 		var imageLoadedAsImgElement = document.createElement("img");

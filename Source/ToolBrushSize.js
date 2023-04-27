@@ -1,18 +1,19 @@
 
-function ToolBrushSize()
+class ToolBrushSize
 {
-	this.name = "BrushSize";
-	this.brushSizeSelected = 1;
-}
+	constructor()
+	{
+		this.name = "BrushSize";
+		this.brushSizeSelected = 1;
+	}
 
-{
-	ToolBrushSize.prototype.brushSizeSet = function(valueToSet)
+	brushSizeSet(valueToSet)
 	{
 		this.brushSizeSelected = valueToSet;
 	}
 
-	ToolBrushSize.prototype.controlUpdate = function()
-	{		
+	controlUpdate()
+	{
 		if (this.control == null)
 		{
 			var returnValue = new ControlContainer
@@ -32,6 +33,6 @@ function ToolBrushSize()
 			this.control = returnValue;
 		}
 
-		return this.control;	
+		return this.control;
 	}
 }

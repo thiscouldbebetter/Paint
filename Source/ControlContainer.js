@@ -1,14 +1,15 @@
 
-function ControlContainer(name, children)
+class ControlContainer
 {
-	this.name = name;
-	this.children = children.addLookups("name");
-}
+	constructor(name, children)
+	{
+		this.name = name;
+		this.children = children.addLookups("name");
+	}
 
-{
 	// dom
 
-	ControlContainer.prototype.domElementUpdate = function()
+	domElementUpdate()
 	{
 		if (this.domElement == null)
 		{

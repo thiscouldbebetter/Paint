@@ -1,18 +1,19 @@
 
-function ControlSelectBox(name, options, optionValueFieldName, change)
+class ControlSelectBox
 {
-	this.name = name;
-	this.options = options;
-	this.optionValueFieldName = optionValueFieldName;
-	this.change = change;
+	constructor(name, options, optionValueFieldName, change)
+	{
+		this.name = name;
+		this.options = options;
+		this.optionValueFieldName = optionValueFieldName;
+		this.change = change;
 
-	this.selectedIndex = null;
-}
+		this.selectedIndex = null;
+	}
 
-{
 	// dom
 
-	ControlSelectBox.prototype.domElementUpdate = function()
+	domElementUpdate()
 	{
 		if (this.domElement == null)
 		{
@@ -33,7 +34,7 @@ function ControlSelectBox(name, options, optionValueFieldName, change)
 		return this.domElement;
 	}
 
-	ControlSelectBox.prototype.domElementUpdate_Options = function()
+	domElementUpdate_Options()
 	{
 		this.domElement.innerHTML = "";
 
@@ -51,7 +52,7 @@ function ControlSelectBox(name, options, optionValueFieldName, change)
 
 	// event handlers
 
-	ControlSelectBox.prototype.handleEventValueChanged = function(event)
+	handleEventValueChanged(event)
 	{
 		var valueToSet = event.target.value;
 

@@ -1,15 +1,16 @@
 
-function ControlTextBox(name, value, change)
+class ControlTextBox
 {
-	this.name = name;
-	this.value = value;
-	this.change = change;
-}
+	constructor(name, value, change)
+	{
+		this.name = name;
+		this.value = value;
+		this.change = change;
+	}
 
-{
 	// dom
 
-	ControlTextBox.prototype.domElementUpdate = function()
+	domElementUpdate()
 	{
 		if (this.domElement == null)
 		{
@@ -24,7 +25,7 @@ function ControlTextBox(name, value, change)
 		return this.domElement;
 	}
 
-	ControlTextBox.prototype.handleEventValueChanged = function(event)
+	handleEventValueChanged(event)
 	{
 		this.value = event.target.value;
 

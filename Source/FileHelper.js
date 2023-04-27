@@ -1,11 +1,7 @@
 
-function FileHelper()
+class FileHelper
 {
-	// static class
-}
-
-{
-	FileHelper.binaryStringToBytes = function(binaryString)
+	static binaryStringToBytes(binaryString)
 	{
 		var returnValues = [];
 
@@ -18,13 +14,13 @@ function FileHelper()
 		return returnValues;
 	}
 
-	FileHelper.destroyClickedElement = function(event)
+	static destroyClickedElement(event)
 	{
 		document.body.removeChild(event.target);
 	}
 
-	FileHelper.loadFileAsBinaryString = function(fileToLoad, contextForCallback, callback)
-	{	
+	static loadFileAsBinaryString(fileToLoad, contextForCallback, callback)
+	{
 		var fileReader = new FileReader();
 		fileReader.onloadend = function(fileLoadedEvent)
 		{
@@ -46,7 +42,7 @@ function FileHelper()
 		fileReader.readAsBinaryString(fileToLoad);
 	}
 
-	FileHelper.saveBytesAsFile = function(bytesToWrite, fileNameToSaveAs)
+	static saveBytesAsFile(bytesToWrite, fileNameToSaveAs)
 	{
 		var bytesToWriteAsArrayBuffer = new ArrayBuffer(bytesToWrite.length);
 		var bytesToWriteAsUIntArray = new Uint8Array(bytesToWriteAsArrayBuffer);
@@ -67,7 +63,7 @@ function FileHelper()
 		downloadLink.href = window.URL.createObjectURL(bytesToWriteAsBlob);
 		downloadLink.onclick = FileHelper.destroyClickedElement;
 		downloadLink.style.display = "none";
-		document.body.appendChild(downloadLink);	
+		document.body.appendChild(downloadLink);
 		downloadLink.click();
 	}
 }

@@ -1,18 +1,19 @@
 
-function ToolPaint()
+class ToolPaint
 {
-	this.name = "Paint";
-}
+	constructor()
+	{
+		this.name = "Paint";
+	}
 
-{
 	// event handlers
 
-	ToolPaint.prototype.processMouseDown = function()
+	processMouseDown()
 	{
 		// do nothing
 	}
 
-	ToolPaint.prototype.processMouseMove = function()
+	processMouseMove()
 	{
 		var tools = this.parentView.tools;
 
@@ -29,14 +30,14 @@ function ToolPaint()
 		this.parentView.controlUpdate();
 	}
 
-	ToolPaint.prototype.processSelection = function()
+	processSelection()
 	{
 		this.parentView.toolSelected = this;
 	}
 
 	// controllable
 
-	ToolPaint.prototype.controlUpdate = function()
+	controlUpdate()
 	{
 		if (this.control == null)
 		{

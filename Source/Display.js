@@ -1,11 +1,12 @@
 
-function Display(size)
+class Display
 {
-	this.size = size;
-}
+	constructor(size)
+	{
+		this.size = size;
+	}
 
-{
-	Display.prototype.initialize = function()
+	initialize()
 	{
 		var canvas = document.createElement("canvas");
 		canvas.width = this.size.x;
@@ -18,7 +19,7 @@ function Display(size)
 		this.graphics = canvas.getContext("2d");
 	}
 
-	Display.prototype.sizeSet = function(sizeToSet)
+	sizeSet(sizeToSet)
 	{
 		this.size = sizeToSet;
 
@@ -37,12 +38,12 @@ function Display(size)
 
 	// drawing
 
-	Display.prototype.clear = function()
+	clear()
 	{
-		this.clearRectangle(Coords.Instances.Zeroes, this.size);
+		this.clearRectangle(Coords.Instances().Zeroes, this.size);
 	}
 
-	Display.prototype.clearRectangle = function(pos, size)
+	clearRectangle(pos, size)
 	{
 		this.graphics.clearRect
 		(
@@ -50,7 +51,7 @@ function Display(size)
 		);
 	}
 
-	Display.prototype.drawOther = function(other, pos, sourcePos, sourceSize)
+	drawOther(other, pos, sourcePos, sourceSize)
 	{
 		if (sourcePos == null)
 		{
@@ -69,7 +70,7 @@ function Display(size)
 		}
 	}
 
-	Display.prototype.drawLine = function(startPos, endPos, color, width)
+	drawLine(startPos, endPos, color, width)
 	{
 		var graphics = this.graphics;
 
@@ -82,7 +83,7 @@ function Display(size)
 		graphics.stroke();
 	}
 
-	Display.prototype.drawRectangle = function(pos, size, colorFill, colorBorder)
+	drawRectangle(pos, size, colorFill, colorBorder)
 	{
 		if (colorFill != null)
 		{

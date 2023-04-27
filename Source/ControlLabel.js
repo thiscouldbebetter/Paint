@@ -1,13 +1,14 @@
 
-function ControlLabel(text)
+class ControlLabel
 {
-	this.text = text;
-}
+	constructor(text)
+	{
+		this.text = text;
+	}
 
-{
 	// dom
 
-	ControlLabel.prototype.domElementUpdate = function()
+	domElementUpdate()
 	{
 		if (this.domElement == null)
 		{
@@ -19,4 +20,5 @@ function ControlLabel(text)
 
 		return this.domElement;
 	}
+
 }

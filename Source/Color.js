@@ -1,14 +1,26 @@
 
-function Color(name, systemColor)
+class Color
 {
-	this.name = name;
-	this.systemColor = systemColor;
+	constructor(name, systemColor)
+	{
+		this.name = name;
+		this.systemColor = systemColor;
+	}
+
+	static Instances()
+	{
+		if (Color._instances == null)
+		{
+			Color._instances = new Color_Instances();
+		}
+		return Color._instances;
+	}
+
 }
 
+class Color_Instances
 {
-	Color.Instances = new Color_Instances();
-
-	function Color_Instances()
+	constructor()
 	{
 		this.Black 	= new Color("Black", "Black");
 		this.Blue 	= new Color("Blue", "Blue");

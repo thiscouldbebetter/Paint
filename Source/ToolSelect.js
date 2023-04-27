@@ -1,23 +1,24 @@
 
-function ToolSelect()
+class ToolSelect
 {
-	this.name = "Select";
-}
+	constructor()
+	{
+		this.name = "Select";
+	}
 
-{
 	// event handlers
 
-	ToolSelect.prototype.copy = function()
+	copy()
 	{
-		this.copyOrCut(false);	
+		this.copyOrCut(false);
 	}
 
-	ToolSelect.prototype.cut = function()
+	cut()
 	{
-		this.copyOrCut(true);	
+		this.copyOrCut(true);
 	}
 
-	ToolSelect.prototype.copyOrCut = function(cutRatherThanCopy)
+	copyOrCut(cutRatherThanCopy)
 	{
 		var view = this.parentView;
 		var layerSelected = view.layerSelected();
@@ -56,7 +57,7 @@ function ToolSelect()
 		view.controlUpdate();
 	}
 
-	ToolSelect.prototype.paste = function()
+	paste()
 	{
 		var view = this.parentView;
 		var layerForClipboard = view.layerForClipboard;
@@ -74,7 +75,7 @@ function ToolSelect()
 		}
 	}
 
-	ToolSelect.prototype.processMouseDown = function()
+	processMouseDown()
 	{
 		var layerSelected = this.parentView.layerSelected();
 
@@ -94,13 +95,13 @@ function ToolSelect()
 		}
 		else
 		{
-			selection.pos = null;	
+			selection.pos = null;
 		}
-	
+
 		this.parentView.controlUpdate();
 	}
 
-	ToolSelect.prototype.processMouseMove = function()
+	processMouseMove()
 	{
 		var selection = this.parentView.selection;
 	
@@ -129,7 +130,7 @@ function ToolSelect()
 		this.parentView.controlUpdate();
 	}
 
-	ToolSelect.prototype.processMouseUp = function()
+	processMouseUp()
 	{
 		var selection = this.parentView.selection;
 		selection.isComplete = true;
@@ -137,14 +138,14 @@ function ToolSelect()
 		this.parentView.controlUpdate();
 	}
 
-	ToolSelect.prototype.processSelection = function()
+	processSelection()
 	{
 		this.parentView.toolSelected = this;
 	}
 
 	// controllable
 
-	ToolSelect.prototype.controlUpdate = function()
+	controlUpdate()
 	{
 		if (this.control == null)
 		{
@@ -174,7 +175,7 @@ function ToolSelect()
 		 			),
 				]
 			);
-	
+
 			this.control = returnValue;	
 		}
 

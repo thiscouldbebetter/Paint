@@ -1,31 +1,32 @@
 
-function ControlCanvas
-(
-	name, 
-	size, 
-	layers, 
-	mousedown, 
-	mousemove, 
-	mouseout, 
-	mouseover, 
-	mouseup
-)
+class ControlCanvas
 {
-	this.name = name;
-	this.size = size;
-	this.layers = layers;
+	constructor
+	(
+		name, 
+		size, 
+		layers, 
+		mousedown, 
+		mousemove, 
+		mouseout, 
+		mouseover, 
+		mouseup
+	)
+	{
+		this.name = name;
+		this.size = size;
+		this.layers = layers;
 
-	this.mousedown = mousedown;
-	this.mousemove = mousemove;
-	this.mouseout = mouseout;
-	this.mouseover = mouseover;
-	this.mouseup = mouseup;
-}
+		this.mousedown = mousedown;
+		this.mousemove = mousemove;
+		this.mouseout = mouseout;
+		this.mouseover = mouseover;
+		this.mouseup = mouseup;
+	}
 
-{
 	// dom
-	
-	ControlCanvas.prototype.domElementUpdate = function()
+
+	domElementUpdate()
 	{
 		if (this.display == null)
 		{
@@ -61,7 +62,7 @@ function ControlCanvas
 
 	// events
 
-	ControlCanvas.prototype.handleEventMouseDown = function(event)
+	handleEventMouseDown(event)
 	{
 		if (this.mousedown != null)
 		{
@@ -69,7 +70,7 @@ function ControlCanvas
 		}
 	}
 
-	ControlCanvas.prototype.handleEventMouseMove = function(event)
+	handleEventMouseMove(event)
 	{
 		if (this.mousemove != null)
 		{
@@ -77,7 +78,7 @@ function ControlCanvas
 		}
 	}
 
-	ControlCanvas.prototype.handleEventMouseOut = function(event)
+	handleEventMouseOut(event)
 	{
 		if (this.mouseout != null)
 		{
@@ -85,7 +86,7 @@ function ControlCanvas
 		}
 	}
 
-	ControlCanvas.prototype.handleEventMouseOver = function(event)
+	handleEventMouseOver(event)
 	{
 		if (this.mouseover != null)
 		{
@@ -93,7 +94,7 @@ function ControlCanvas
 		}
 	}
 
-	ControlCanvas.prototype.handleEventMouseUp = function(event)
+	handleEventMouseUp(event)
 	{
 		if (this.mouseup != null)
 		{

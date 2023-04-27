@@ -1,14 +1,15 @@
 
-function ControlButton(text, click)
+class ControlButton
 {
-	this.text = text;
-	this.click = click;
-}
+	constructor(text, click)
+	{
+		this.text = text;
+		this.click = click;
+	}
 
-{
 	// dom
 
-	ControlButton.prototype.domElementUpdate = function()
+	domElementUpdate()
 	{
 		if (this.domElement == null)
 		{
@@ -23,7 +24,7 @@ function ControlButton(text, click)
 
 	// event handlers
 
-	ControlButton.prototype.handleEventClick = function(event)
+	handleEventClick(event)
 	{
 		this.click();
 	}
