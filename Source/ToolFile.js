@@ -9,9 +9,9 @@ class ToolFile
 
 	// event handlers
 
-	processFileNameToSaveAsChange(event)
+	processFileNameToSaveAsChange(value)
 	{
-		this.fileNameToSaveAs = event.target.value;
+		this.fileNameToSaveAs = value;
 	}
 
 	processSaveAsPNG(event)
@@ -50,7 +50,7 @@ class ToolFile
 			fileNameToSaveAs += ".tar";
 		}
 
-		var layersAsTarFile = TarFile.new(fileNameToSaveAs);
+		var layersAsTarFile = TarFile.create(fileNameToSaveAs);
 
 		var layers = this.parentView.layers;
 
@@ -169,31 +169,35 @@ class ToolFile
 
 	layerAddFromPNGAsBytes(fileContentAsBytes)
 	{
+		var imageLoadedAsImgElement = document.createElement("img");
+		imageLoadedAsImgElement.onload = (event) =>
+		{
+			var imageSize = new Coords
+			(
+				imageLoadedAsImgElement.width,
+				imageLoadedAsImgElement.height
+			);
+			var imageLoadedAsDisplay = new Display(imageSize);
+			imageLoadedAsDisplay.initialize();
+			var graphics = imageLoadedAsDisplay.canvas.getContext("2d");
+			graphics.drawImage(imageLoadedAsImgElement, 0, 0);
+
+			var view = this.parentView;
+			var toolLayers = view.tools["Layers"];
+			toolLayers.layerAdd();
+			var layerNew = view.layerSelected();
+			layerNew.display.drawOther
+			(
+				imageLoadedAsDisplay, new Coords(0, 0)
+			);
+			view.controlUpdate();
+		}
+
 		var fileContentAsBase64 = 
 			Base64Encoder.bytesToBase64String(fileContentAsBytes);
 
 		var dataURL = "data:image/png;base64," + fileContentAsBase64;
 
-		var imageLoadedAsImgElement = document.createElement("img");
 		imageLoadedAsImgElement.src = dataURL;
-		var imageSize = new Coords
-		(
-			imageLoadedAsImgElement.width,
-			imageLoadedAsImgElement.height
-		);
-		var imageLoadedAsDisplay = new Display(imageSize);
-		imageLoadedAsDisplay.initialize();
-		var graphics = imageLoadedAsDisplay.canvas.getContext("2d");
-		graphics.drawImage(imageLoadedAsImgElement, 0, 0);
-
-		var view = this.parentView;
-		var toolLayers = view.tools["Layers"];
-		toolLayers.layerAdd();
-		var layerNew = view.layerSelected();
-		layerNew.display.drawOther
-		(
-			imageLoadedAsDisplay, new Coords(0, 0)
-		);
-		view.controlUpdate();
 	}
 }
