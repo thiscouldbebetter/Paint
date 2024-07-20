@@ -1,12 +1,12 @@
 
-class ToolPaint
+class ToolErase
 {
 	constructor()
 	{
-		this.name = ToolPaint.Name();
+		this.name = ToolErase.Name();
 	}
 
-	static Name() { return "Paint"; }
+	static Name() { return "Erase"; }
 
 	// event handlers
 
@@ -25,14 +25,12 @@ class ToolPaint
 		var posFrom = this.parentView.mousePosPrev.clone().subtract(layerSelectedOffset);
 		var posTo = this.parentView.mousePos.clone().subtract(layerSelectedOffset);
 
-		var toolColorPalette = this.parentView.toolColorPalette();
 		var toolBrushSize = this.parentView.toolBrushSize();
 
-		layerSelected.display.drawLine
+		layerSelected.display.clearLine
 		(
 			posFrom,
 			posTo,
-			toolColorPalette.colorSelected, 
 			toolBrushSize.brushSizeSelected
 		);
 

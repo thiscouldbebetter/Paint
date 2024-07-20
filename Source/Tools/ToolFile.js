@@ -3,9 +3,11 @@ class ToolFile
 {
 	constructor()
 	{
-		this.name = "FileSave";
+		this.name = ToolFile.Name();
 		this.fileNameToSaveAs = "Untitled";
 	}
+
+	static Name() { return "File"; }
 
 	// event handlers
 
@@ -16,7 +18,7 @@ class ToolFile
 
 	processSaveAsPNG(event)
 	{
-		var canvas = this.parentView.control.children["viewCanvas"].display.canvas;
+		var canvas = this.parentView.control.childByName("viewCanvas").display.canvas;
 
 		var imageFromCanvasURL = canvas.toDataURL("image/png");
 
@@ -183,7 +185,7 @@ class ToolFile
 			graphics.drawImage(imageLoadedAsImgElement, 0, 0);
 
 			var view = this.parentView;
-			var toolLayers = view.tools["Layers"];
+			var toolLayers = view.toolLayers();
 			toolLayers.layerAdd();
 			var layerNew = view.layerSelected();
 			layerNew.display.drawOther

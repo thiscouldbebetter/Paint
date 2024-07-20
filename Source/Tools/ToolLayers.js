@@ -4,10 +4,12 @@ class ToolLayers
 {
 	constructor()
 	{
-		this.name = "Layers";
+		this.name = ToolLayers.Name();
 		this.layerIndexSelected = 0;
 		this.moveStepDistance = 10;
 	}
+
+	static Name() { return "Layers"; }
 
 	// event handlers
 
@@ -140,7 +142,6 @@ class ToolLayers
 
 		var layersAll = this.parentView.layers;
 		layersAll.splice(this.layerIndexSelected, 1);
-		delete layersAll[layerToRemove.name];
 
 		this.layerIndexSelected = 0;
 
@@ -151,8 +152,8 @@ class ToolLayers
 	layerSelectedRename()
 	{
 		var layerSelected = this.parentView.layerSelected();
-		var containerRename = this.control.children["containerRename"];
-		var textName = containerRename.children["textName"];
+		var containerRename = this.control.childByName("containerRename");
+		var textName = containerRename.childByName("textName");
 		var nameToSet = textName.value;
 		if (nameToSet == "")
 		{
@@ -161,7 +162,6 @@ class ToolLayers
 		else
 		{
 			var layersAll = this.parentView.layers;
-			delete layersAll[layerSelected.name];
 			layerSelected.name = nameToSet;
 			layersAll[nameToSet] = layerSelected;
 

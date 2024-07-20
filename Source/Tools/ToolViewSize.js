@@ -3,8 +3,10 @@ class ToolViewSize
 {
 	constructor()
 	{
-		this.name = "ViewSize";
+		this.name = ToolViewSize.Name();
 	}
+
+	static Name() { return "ViewSize"; }
 
 	// event handlers
 
@@ -26,7 +28,7 @@ class ToolViewSize
 
 		var layers = this.parentView.layers;
 
-		var displayMain = this.parentView.control.children["viewCanvas"].display;
+		var displayMain = this.parentView.control.childByName("viewCanvas").display;
 		displayMain.sizeSet(size);
 
 		for (var i = 0; i < layers.length; i++)

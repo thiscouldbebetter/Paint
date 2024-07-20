@@ -3,9 +3,11 @@ class ToolBrushSize
 {
 	constructor()
 	{
-		this.name = "BrushSize";
+		this.name = ToolBrushSize.Name();
 		this.brushSizeSelected = 1;
 	}
+
+	static Name() { return "BrushSize"; }
 
 	brushSizeSet(valueToSet)
 	{

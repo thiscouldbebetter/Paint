@@ -16,6 +16,10 @@ class Color
 		return Color._instances;
 	}
 
+	static byName(name)
+	{
+		return Color.Instances().byName(name);
+	}
 }
 
 class Color_Instances
@@ -52,6 +56,11 @@ class Color_Instances
 			this.Violet
 		];
 
-		this._All.addLookups("name");
+		this._AllByName = new Map(this._All.map(x => [x.name, x] ) );
+	}
+
+	byName(name)
+	{
+		return this._AllByName.get(name);
 	}
 }

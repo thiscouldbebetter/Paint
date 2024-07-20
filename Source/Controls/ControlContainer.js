@@ -4,10 +4,15 @@ class ControlContainer
 	constructor(name, children)
 	{
 		this.name = name;
-		this.children = children.addLookups("name");
+		this.children = children;
 	}
 
-	// dom
+	childByName(name)
+	{
+		return this.children.find(x => x.name == name);
+	}
+
+	// DOM.
 
 	domElementUpdate()
 	{

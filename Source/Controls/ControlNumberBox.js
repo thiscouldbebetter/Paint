@@ -1,11 +1,12 @@
 
 class ControlNumberBox
 {
-	constructor(name, value, change)
+	constructor(name, value, change, max)
 	{
 		this.name = name;
 		this.value = value;
 		this.change = change;
+		this.max = max;
 	}
 
 	// dom
@@ -17,9 +18,15 @@ class ControlNumberBox
 			var returnValue = document.createElement("input");
 			returnValue.type = "number"
 			returnValue.id = this.name;
+			returnValue.min = 0;
 			returnValue.style.width = "64px"; // hack
 			returnValue.onchange = this.handleEventChanged.bind(this);
 			returnValue.value = this.value;
+
+			if (this.max != null)
+			{
+				returnValue.max = this.max;
+			}
 
 			this.domElement = returnValue;
 		}

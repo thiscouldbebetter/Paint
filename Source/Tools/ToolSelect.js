@@ -3,8 +3,10 @@ class ToolSelect
 {
 	constructor()
 	{
-		this.name = "Select";
+		this.name = ToolSelect.Name();
 	}
+
+	static Name() { return "Select"; }
 
 	// event handlers
 
@@ -67,7 +69,7 @@ class ToolSelect
 			layersAll.push(layerForClipboard);
 			view.layerForClipboard = null;
 
-			var toolLayers = view.tools["Layers"];
+			var toolLayers = view.toolLayers();
 			toolLayers.layerIndexSelected = layersAll.length - 1;
 			toolLayers.controlUpdate();
 

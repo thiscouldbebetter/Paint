@@ -11,7 +11,7 @@ class ControlSelectBox
 		this.selectedIndex = null;
 	}
 
-	// dom
+	// DOM.
 
 	domElementUpdate()
 	{

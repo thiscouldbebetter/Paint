@@ -3,18 +3,18 @@ class ToolFill
 {
 	constructor()
 	{
-		this.name = "Fill";
+		this.name = ToolFill.Name();
 	}
+
+	static Name() { return "Fill"; }
 
 	// event handlers
 
 	processSelection()
 	{
-		var tools = this.parentView.tools;
-
 		var layerSelected = this.parentView.layerSelected();
 		var display = layerSelected.display;
-		var color = tools["ColorPalette"].colorSelected;
+		var color = this.parentView.toolColorPalette().colorSelected;
 		var size = this.parentView.size;
 
 		display.drawRectangle(Coords.Instances().Zeroes, size, color);

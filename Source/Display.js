@@ -43,6 +43,29 @@ class Display
 		this.clearRectangle(Coords.Instances().Zeroes, this.size);
 	}
 
+	clearLine(startPos, endPos, width)
+	{
+		var g = this.graphics;
+
+		var displacement = endPos.clone().subtract(startPos);
+		var distance = displacement.magnitude();
+		var widthHalf = width / 2;
+		var centerPos = new Coords();
+		for (var t = 0; t < distance; t++)
+		{
+			var fractionOfWayFromStartToEnd = t / distance;
+			centerPos
+				.overwriteWith(displacement)
+				.multiplyScalar(fractionOfWayFromStartToEnd)
+				.add(startPos);
+			g.clearRect
+			(
+				centerPos.x - widthHalf, centerPos.y - widthHalf,
+				width, width
+			)
+		}
+	}
+
 	clearRectangle(pos, size)
 	{
 		this.graphics.clearRect
@@ -72,15 +95,15 @@ class Display
 
 	drawLine(startPos, endPos, color, width)
 	{
-		var graphics = this.graphics;
+		var g = this.graphics;
 
-		graphics.strokeStyle = color.systemColor;
-		graphics.lineWidth = width;
-		graphics.lineCap = "round";
-		graphics.beginPath();
-		graphics.moveTo(startPos.x, startPos.y);
-		graphics.lineTo(endPos.x, endPos.y);
-		graphics.stroke();
+		g.strokeStyle = color.systemColor;
+		g.lineWidth = width;
+		g.lineCap = "round";
+		g.beginPath();
+		g.moveTo(startPos.x, startPos.y);
+		g.lineTo(endPos.x, endPos.y);
+		g.stroke();
 	}
 
 	drawRectangle(pos, size, colorFill, colorBorder)

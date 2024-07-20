@@ -4,7 +4,7 @@ class View
 	constructor(size, toolNameToSelectInitial, tools)
 	{
 		this.size = size;
-		this.tools = tools.addLookups("name");
+		this.tools = tools;
 
 		for (var i = 0; i < this.tools.length; i++)
 		{
@@ -12,14 +12,12 @@ class View
 			tool.parentView = this;
 		}
 
-		this.toolSelected = this.tools[toolNameToSelectInitial];
+		this.toolSelected = this.toolByName(toolNameToSelectInitial);
 
 		this.layers = 
 		[
 			new Layer("Layer0", size, new Coords(0, 0)),
 		];
-
-		this.layers.addLookups("name");
 
 		for (var i = 0; i < this.layers.length; i++)
 		{
@@ -74,12 +72,59 @@ class View
 
 	layerSelected()
 	{
-		var layerIndexSelected = this.tools["Layers"].layerIndexSelected;
+		var layerIndexSelected = this.toolLayers().layerIndexSelected;
 		var returnValue = this.layers[layerIndexSelected]; 
 		return returnValue;
 	}
 
-	// event handlers
+	toolByName(name)
+	{
+		return this.tools.find(x => x.name == name);
+	}
+
+	// Tools.
+
+	toolBrushSize()
+	{
+		return this.toolByName(ToolBrushSize.Name() );
+	}
+
+	toolColorPalette()
+	{
+		return this.toolByName(ToolColorPalette.Name() );
+	}
+
+	toolFile()
+	{
+		return this.toolByName(ToolFile.Name() );
+	}
+
+	toolFill()
+	{
+		return this.toolByName(ToolFill.Name() );
+	}
+
+	toolLayers()
+	{
+		return this.toolByName(ToolLayers.Name() );
+	}
+
+	toolPaint()
+	{
+		return this.toolByName(ToolPaint.Name() );
+	}
+
+	toolSelect()
+	{
+		return this.toolByName(ToolSelect.Name() );
+	}
+
+	toolViewSize()
+	{
+		return this.toolByName(ToolViewSize.Name() );
+	}
+
+	// Event handlers.
 
 	processMouseDown(event)
 	{
@@ -99,7 +144,7 @@ class View
 
 	processMouseOver(event)
 	{
-		// do nothing
+		// Do nothing.
 	}
 
 	processMouseOut(event)
@@ -128,7 +173,7 @@ class View
 		this.isMouseDown = false;
 	}
 
-	// controllable
+	// Controllable.
 
 	controlUpdate()
 	{ 

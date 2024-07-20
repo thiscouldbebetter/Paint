@@ -13,6 +13,7 @@ function main()
 			new ToolPaint(),
 			new ToolFill(),
 			new ToolSelect(),
+			new ToolErase(),
 		]
 	);
 
