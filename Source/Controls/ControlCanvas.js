@@ -35,11 +35,17 @@ class ControlCanvas
 			this.domElement = this.display.canvas;
 
 			// hack
-			this.domElement.onmousedown = this.handleEventMouseDown.bind(this);
-			this.domElement.onmousemove = this.handleEventMouseMove.bind(this);
-			this.domElement.onmouseout = this.handleEventMouseOut.bind(this);
-			this.domElement.onmouseover = this.handleEventMouseOver.bind(this);
-			this.domElement.onmouseup = this.handleEventMouseUp.bind(this);
+			var de = this.domElement;
+			de.onmousedown = this.handleEventMouseDown.bind(this);
+			de.onmousemove = this.handleEventMouseMove.bind(this);
+			de.onmouseout = this.handleEventMouseOut.bind(this);
+			de.onmouseover = this.handleEventMouseOver.bind(this);
+			de.onmouseup = this.handleEventMouseUp.bind(this);
+
+			// For touchscreens.
+			de.ontouchstart = this.handleEventTouchStart.bind(this);
+			de.ontouchmove = this.handleEventTouchMove.bind(this);
+			de.ontouchend = this.handleEventTouchEnd.bind(this);
 		}
 
 		this.display.clear();
@@ -100,6 +106,21 @@ class ControlCanvas
 		{
 			this.mouseup(event);
 		}
+	}
+
+	handleEventTouchEnd(event)
+	{
+		this.handleEventMouseUp(event);
+	}
+
+	handleEventTouchMove(event)
+	{
+		this.handleEventMouseMove(event);
+	}
+
+	handleEventTouchStart(event)
+	{
+		this.handleEventMouseDown(event);
 	}
 
 }
