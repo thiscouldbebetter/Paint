@@ -52,7 +52,7 @@ class ToolFile
 			fileNameToSaveAs += ".tar";
 		}
 
-		var layersAsTarFile = TarFile.create(fileNameToSaveAs);
+		var layersAsTarFile = TarFile.fromName(fileNameToSaveAs);
 
 		var layers = this.parentView.layers;
 
