@@ -37,7 +37,7 @@ class ControlContainer
 			var child = this.children[i];
 			child.domElementUpdate();
 		}
-		
+
 		return this.domElement;
 	}
 }

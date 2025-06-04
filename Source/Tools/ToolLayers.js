@@ -68,6 +68,9 @@ class ToolLayers
 		var layersAll = this.parentView.layers;
 		var layerToSelectIndex = layersAll.indexOf(layerToSelect);
 		this.layerSetByIndex(layerToSelectIndex);
+
+		this.controlUpdateOffset();
+		this.parentView.controlUpdate();
 	}
 
 	layerSelected()
@@ -130,19 +133,8 @@ class ToolLayers
 		var layerSelected = this.layerSelected();
 		var layerSelectedOffset = layerSelected.offset;
 		layerSelectedOffset.add(moveAmount);
-		var containerOffset =
-			this.control.childByName("containerOffset");
-		var numberLayerSelectedOffsetX =
-			containerOffset.childByName("numberLayerSelectedOffsetX");
-		var numberLayerSelectedOffsetY =
-			containerOffset.childByName("numberLayerSelectedOffsetY");
-		numberLayerSelectedOffsetX.value =
-			layerSelectedOffset.x;
-		numberLayerSelectedOffsetY.value =
-			layerSelectedOffset.y;
-		numberLayerSelectedOffsetX.domElementUpdate();
-		numberLayerSelectedOffsetY.domElementUpdate();
 
+		this.controlUpdateOffset();
 		this.parentView.controlUpdate();
 	}
 
@@ -435,5 +427,25 @@ class ToolLayers
 		selectLayer.domElementUpdate();
 
 		return this.control;
+	}
+
+	controlUpdateOffset()
+	{
+		var containerOffset =
+			this.control.childByName("containerOffset");
+		var numberLayerSelectedOffsetX =
+			containerOffset.childByName("numberLayerSelectedOffsetX");
+		var numberLayerSelectedOffsetY =
+			containerOffset.childByName("numberLayerSelectedOffsetY");
+
+		var layerSelected = this.layerSelected();
+		var layerSelectedOffset = layerSelected.offset;
+
+		numberLayerSelectedOffsetX.value =
+			layerSelectedOffset.x;
+		numberLayerSelectedOffsetY.value =
+			layerSelectedOffset.y;
+		numberLayerSelectedOffsetX.domElementUpdate();
+		numberLayerSelectedOffsetY.domElementUpdate();
 	}
 }
