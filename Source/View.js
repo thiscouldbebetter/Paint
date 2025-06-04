@@ -45,12 +45,16 @@ class View
 
 		var graphicsForCanvas = canvas.getContext("2d");
 
-		graphicsForCanvas.fillStyle = Color.Instances().Gray.systemColor;
+		var colors = Color.Instances();
+
+		graphicsForCanvas.fillStyle =
+			colors.Gray.systemColor();
 		graphicsForCanvas.fillRect
 		(
 			0, 0, imageSizeInPixels.x, imageSizeInPixels.y
 		);
-		graphicsForCanvas.fillStyle = Color.Instances().GrayDark.systemColor;
+		graphicsForCanvas.fillStyle =
+			colors.GrayLight.systemColor();
 		graphicsForCanvas.fillRect
 		(
 			0, 0, imageSizeInPixelsHalf.x, imageSizeInPixelsHalf.y

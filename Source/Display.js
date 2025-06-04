@@ -97,7 +97,7 @@ class Display
 	{
 		var g = this.graphics;
 
-		g.strokeStyle = color.systemColor;
+		g.strokeStyle = color.systemColor();
 		g.lineWidth = width;
 		g.lineCap = "round";
 		g.beginPath();
@@ -108,16 +108,18 @@ class Display
 
 	drawRectangle(pos, size, colorFill, colorBorder)
 	{
+		var g = this.graphics;
+
 		if (colorFill != null)
 		{
-			this.graphics.fillStyle = colorFill.systemColor;
-			this.graphics.fillRect(pos.x, pos.y, size.x, size.y);
+			g.fillStyle = colorFill.systemColor();
+			g.fillRect(pos.x, pos.y, size.x, size.y);
 		}
 
 		if (colorBorder != null)
 		{
-			this.graphics.strokeStyle = colorBorder.systemColor;
-			this.graphics.strokeRect(pos.x, pos.y, size.x, size.y);
+			g.strokeStyle = colorBorder.systemColor();
+			g.strokeRect(pos.x, pos.y, size.x, size.y);
 		}
 	}
 }

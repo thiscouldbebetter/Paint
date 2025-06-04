@@ -38,9 +38,57 @@ class ToolColorPalette
 		return this.colors.find(x => x.name == name);
 	}
 
+	colorNameChanged()
+	{
+		var textName = this.control.childByName("textName");
+		var nameToSet = textName.value;
+		var colorSelected = this.colorSelected;
+		colorSelected.name = nameToSet;
+		this.colorSelect(colorSelected);
+	}
+
+	colorSelect(colorToSelect)
+	{
+		this.colorSelected = colorToSelect;
+
+		var textName = this.control.childByName("textName");
+		var numberRed = this.control.childByName("numberRed");
+		var numberGreen = this.control.childByName("numberGreen");
+		var numberBlue = this.control.childByName("numberBlue");
+
+		textName.value = colorToSelect.name;
+		numberRed.value = colorToSelect.componentRed();
+		numberGreen.value = colorToSelect.componentGreen();
+		numberBlue.value = colorToSelect.componentBlue();
+
+		this.control.domElementUpdate();
+	}
+
 	colorSelectByName(colorName)
 	{
-		this.colorSelected = this.colorByName(colorName);
+		var colorToSelect = this.colorByName(colorName);
+		this.colorSelect(colorToSelect);
+	}
+
+	colorSetFromControls()
+	{
+		var control = this.control;
+		var textName = control.childByName("textName");
+		var numberRed = control.childByName("numberRed");
+		var numberGreen = control.childByName("numberGreen");
+		var numberBlue = control.childByName("numberBlue");
+
+		var colorSelected = this.colorSelected;
+
+		colorSelected.overwriteWithNameAndComponentsRgb
+		(
+			textName.value,
+			numberRed.value,
+			numberGreen.value,
+			numberBlue.value
+		);
+
+		this.colorSelect(colorSelected);
 	}
 
 	/*
@@ -89,11 +137,14 @@ class ToolColorPalette
 						"Add New with:",
 						this.colorAdd.bind(this)
  					),
+					*/
 
 					new ControlLabel("Name:"),
 					new ControlTextBox
 					(
-						"textName", ""
+						"textName",
+						"[custom]",
+						this.colorNameChanged.bind(this)
 					),
 
 					new ControlLabel("Red:"),
@@ -101,28 +152,30 @@ class ToolColorPalette
 					(
 						"numberRed", // id
 						0, // value
-						null, // set
+						this.colorSetFromControls.bind(this),
 						componentMax
 					),
+					new ControlLabel("/255"),
 
 					new ControlLabel("Green:"),
 					new ControlNumberBox
 					(
 						"numberGreen", // id
 						0, // value
-						null, // set
+						this.colorSetFromControls.bind(this),
 						componentMax
 					),
+					new ControlLabel("/255"),
 
 					new ControlLabel("Blue:"),
 					new ControlNumberBox
 					(
 						"numberBlue", // id
 						0, // value
-						null, // set
+						this.colorSetFromControls.bind(this),
 						componentMax
-					)
-					*/
+					),
+					new ControlLabel("/255")
 				]
 			);
 
