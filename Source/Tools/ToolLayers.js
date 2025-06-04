@@ -12,7 +12,24 @@ class ToolLayers
 
 	// event handlers
 
-	layerAdd()
+	layerAdd(layerToAdd)
+	{
+		layerToAdd.parentView = this.parentView;
+
+		var layersAll = this.parentView.layers;
+		layersAll.push(layerToAdd);
+		layersAll[layerToAdd.name] = layerToAdd;
+
+		this.controlUpdate();
+	}
+
+	layerAddAndSelectNew()
+	{
+		var layerNew = this.layerAddNew();
+		this.layerSelect(layerNew);
+	}
+
+	layerAddNew()
 	{
 		var layersAll = this.parentView.layers;
 		var layerNewIndex = layersAll.length;
@@ -22,13 +39,8 @@ class ToolLayers
 			this.parentView.size.clone(),
 			new Coords(0, 0) // offset
 		);
-		layerNew.parentView = this.parentView;
-		layersAll.push(layerNew);
-		layersAll[layerNew.name] = layerNew;
-
-		this.layerIndexSelected = layerNewIndex;
-
-		this.controlUpdate();
+		this.layerAdd(layerNew);
+		return layerNew;
 	}
 
 	layerClone()
@@ -49,6 +61,13 @@ class ToolLayers
 		this.layerIndexSelected = layerClonedIndex;
 
 		this.controlUpdate();
+	}
+
+	layerSelect(layerToSelect)
+	{
+		var layersAll = this.parentView.layers;
+		var layerToSelectIndex = layersAll.indexOf(layerToSelect);
+		this.layerSetByIndex(layerToSelectIndex);
 	}
 
 	layerSelected()
@@ -75,25 +94,39 @@ class ToolLayers
 		var layerSelected = this.layerSelected();
 		var layersAll = this.parentView.layers;
 		var layerSelectedIndex = layersAll.indexOf(layerSelected);
-		if (layerSelectedIndex > 0)
+
+		var layerToDrawTo;
+
+		if (layerSelectedIndex == 0)
+		{
+			layerToDrawTo = this.layerAddNew();
+		}
+		else
 		{
 			var layerUnderneathIndex = layerSelectedIndex - 1;
-			var layerUnderneath = layersAll[layerUnderneathIndex];
-			layerUnderneath.display.drawOther
-			(
-				layerSelected.display,
-				layerSelected.offset.clone().subtract
-				(
-					layerUnderneath.offset
-				)
-			);
-			this.layerSelectedRemove();
+			layerToDrawTo = layersAll[layerUnderneathIndex];
 		}
+
+		var drawPos =
+			layerSelected.offset
+				.clone()
+				.subtract(layerToDrawTo.offset);
+
+		layerToDrawTo.display.drawOther
+		(
+			layerSelected.display,
+			drawPos
+		);
+
+		this.layerSelectedRemove();
+
+		this.layerSelect(layerToDrawTo);
 	}
 
 	layerSelectedMove(direction)
 	{
-		var moveAmount = direction.multiplyScalar(this.moveStepDistance);
+		var moveAmount =
+			direction.clone().multiplyScalar(this.moveStepDistance);
 		var layerSelected = this.layerSelected();
 		var layerSelectedOffset = layerSelected.offset;
 		layerSelectedOffset.add(moveAmount);
@@ -115,22 +148,22 @@ class ToolLayers
 
 	layerSelectedMoveDown()
 	{
-		this.layerSelectedMove(new Coords(0, 1));
+		this.layerSelectedMove(new Coords(0, 1) );
 	}
 
 	layerSelectedMoveLeft()
 	{
-		this.layerSelectedMove(new Coords(-1, 0));
+		this.layerSelectedMove(new Coords(-1, 0) );
 	}
 
 	layerSelectedMoveRight()
 	{
-		this.layerSelectedMove(new Coords(1, 0));
+		this.layerSelectedMove(new Coords(1, 0) );
 	}
 
 	layerSelectedMoveUp()
 	{
-		this.layerSelectedMove(new Coords(0, -1));
+		this.layerSelectedMove(new Coords(0, -1) );
 	}
 
 	layerSelectedOffsetChanged()
@@ -267,7 +300,7 @@ class ToolLayers
 					new ControlButton
 					(
 						"Add",
-						this.layerAdd.bind(this)
+						this.layerAddAndSelectNew.bind(this)
 					),
 
 					new ControlButton
@@ -362,6 +395,7 @@ class ToolLayers
 						"Lower",
 						this.layerSelectedLower.bind(this)
 					),
+
 					new ControlButton
 					(
 						"Merge Down",

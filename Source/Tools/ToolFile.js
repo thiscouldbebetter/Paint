@@ -186,7 +186,7 @@ class ToolFile
 
 			var view = this.parentView;
 			var toolLayers = view.toolLayers();
-			toolLayers.layerAdd();
+			toolLayers.layerAddNew();
 			var layerNew = view.layerSelected();
 			layerNew.display.drawOther
 			(
