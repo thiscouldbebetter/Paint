@@ -1,5 +1,4 @@
 
-
 class ToolLayers
 {
 	constructor()
@@ -34,7 +33,7 @@ class ToolLayers
 
 	layerClone()
 	{
-		var layerToClone = this.parentView.layerSelected();	
+		var layerToClone = this.layerSelected();
 		var layersAll = this.parentView.layers;
 		var layerClonedName = layerToClone + "_Clone";
 		var layerNew = new Layer
@@ -52,10 +51,16 @@ class ToolLayers
 		this.controlUpdate();
 	}
 
+	layerSelected()
+	{
+		return this.parentView.layerSelected();
+	}
+
 	layerSelectedHideOrShow()
 	{
-		var layerSelected = this.parentView.layerSelected();
-		layerSelected.isVisible = (layerSelected.isVisible == false);
+		var layerSelected = this.layerSelected();
+		layerSelected.isVisible =
+			(layerSelected.isVisible == false);
 		this.controlUpdate();
 		this.parentView.controlUpdate();
 	}
@@ -67,7 +72,7 @@ class ToolLayers
 
 	layerSelectedMergeDown()
 	{
-		var layerSelected = this.parentView.layerSelected();
+		var layerSelected = this.layerSelected();
 		var layersAll = this.parentView.layers;
 		var layerSelectedIndex = layersAll.indexOf(layerSelected);
 		if (layerSelectedIndex > 0)
@@ -88,9 +93,23 @@ class ToolLayers
 
 	layerSelectedMove(direction)
 	{
-		var offset = direction.multiplyScalar(this.moveStepDistance);
-		var layerSelected = this.parentView.layerSelected();
-		layerSelected.offset.add(offset);
+		var moveAmount = direction.multiplyScalar(this.moveStepDistance);
+		var layerSelected = this.layerSelected();
+		var layerSelectedOffset = layerSelected.offset;
+		layerSelectedOffset.add(moveAmount);
+		var containerOffset =
+			this.control.childByName("containerOffset");
+		var numberLayerSelectedOffsetX =
+			containerOffset.childByName("numberLayerSelectedOffsetX");
+		var numberLayerSelectedOffsetY =
+			containerOffset.childByName("numberLayerSelectedOffsetY");
+		numberLayerSelectedOffsetX.value =
+			layerSelectedOffset.x;
+		numberLayerSelectedOffsetY.value =
+			layerSelectedOffset.y;
+		numberLayerSelectedOffsetX.domElementUpdate();
+		numberLayerSelectedOffsetY.domElementUpdate();
+
 		this.parentView.controlUpdate();
 	}
 
@@ -114,6 +133,36 @@ class ToolLayers
 		this.layerSelectedMove(new Coords(0, -1));
 	}
 
+	layerSelectedOffsetChanged()
+	{
+		var layerSelected = this.layerSelected();
+
+		var containerOffset =
+			this.control.childByName("containerOffset");
+
+		var numberLayerSelectedOffsetX =
+			containerOffset.childByName("numberLayerSelectedOffsetX");
+		var layerSelectedOffsetXAsString =
+			numberLayerSelectedOffsetX.value;
+		var layerSelectedOffsetX =
+			parseInt(layerSelectedOffsetXAsString);
+
+		var numberLayerSelectedOffsetY =
+			containerOffset.childByName("numberLayerSelectedOffsetY");
+		var layerSelectedOffsetYAsString =
+			numberLayerSelectedOffsetY.value;
+		var layerSelectedOffsetY =
+			parseInt(layerSelectedOffsetYAsString);
+
+		layerSelected.offset.overwriteWithDimensions
+		(
+			layerSelectedOffsetX,
+			layerSelectedOffsetY
+		);
+
+		this.parentView.controlUpdate();
+	}
+
 	layerSelectedRaise(offset)
 	{
 		this.layerSelectedRaiseOrLower(1);
@@ -121,7 +170,7 @@ class ToolLayers
 
 	layerSelectedRaiseOrLower(offset)
 	{
-		var layerSelected = this.parentView.layerSelected();
+		var layerSelected = this.layerSelected();
 
 		var layers = this.parentView.layers;
 		var layerSelectedIndex = layers.indexOf(layerSelected);
@@ -138,7 +187,7 @@ class ToolLayers
 
 	layerSelectedRemove()
 	{
-		var layerToRemove = this.parentView.layerSelected();
+		var layerToRemove = this.layerSelected();
 
 		var layersAll = this.parentView.layers;
 		layersAll.splice(this.layerIndexSelected, 1);
@@ -151,7 +200,7 @@ class ToolLayers
 
 	layerSelectedRename()
 	{
-		var layerSelected = this.parentView.layerSelected();
+		var layerSelected = this.layerSelected();
 		var containerRename = this.control.childByName("containerRename");
 		var textName = containerRename.childByName("textName");
 		var nameToSet = textName.value;
@@ -165,7 +214,7 @@ class ToolLayers
 			layerSelected.name = nameToSet;
 			layersAll[nameToSet] = layerSelected;
 
-			this.controlUpdate()
+			this.controlUpdate();
 			this.parentView.controlUpdate();
 		}
 	}
@@ -242,10 +291,30 @@ class ToolLayers
 				]
 			);
 
-			var containerMove = new ControlContainer
+			var containerOffset = new ControlContainer
 			(
-				"containerMove",
+				"containerOffset",
 				[
+					new ControlLabel("Offset:"),
+
+					new ControlLabel("X:"),
+
+					new ControlNumberBox
+					(
+						"numberLayerSelectedOffsetX",
+						this.layerSelected().offset.x,
+						this.layerSelectedOffsetChanged.bind(this)
+					),
+
+					new ControlLabel("Y:"),
+
+					new ControlNumberBox
+					(
+						"numberLayerSelectedOffsetY",
+						this.layerSelected().offset.y,
+						this.layerSelectedOffsetChanged.bind(this)
+					),
+
 					new ControlLabel("Move:"),
 
 					new ControlNumberBox
@@ -303,7 +372,7 @@ class ToolLayers
 
 			var returnValue = new ControlContainer
 			(
-				"contatinerToolLayers",
+				"containerToolLayers",
 				[
 					new ControlLabel("Layer:"),
 
@@ -312,11 +381,10 @@ class ToolLayers
 					containerRename,
 
 					containerAddRemoveHide,
-	
+
 					containerRaiseOrLower,
 
-					containerMove,
-
+					containerOffset
 				]
 			);
 

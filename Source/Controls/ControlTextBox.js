@@ -16,11 +16,12 @@ class ControlTextBox
 		{
 			var returnValue = document.createElement("input");
 			returnValue.id = this.name;
-			returnValue.value = this.value;
 			returnValue.onchange = this.handleEventValueChanged.bind(this);
 
 			this.domElement = returnValue;
 		}
+
+		this.domElement.value = this.value;
 
 		return this.domElement;
 	}

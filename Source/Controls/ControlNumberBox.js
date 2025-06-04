@@ -21,7 +21,6 @@ class ControlNumberBox
 			returnValue.min = 0;
 			returnValue.style.width = "64px"; // hack
 			returnValue.onchange = this.handleEventChanged.bind(this);
-			returnValue.value = this.value;
 
 			if (this.max != null)
 			{
@@ -30,6 +29,8 @@ class ControlNumberBox
 
 			this.domElement = returnValue;
 		}
+
+		this.domElement.value = this.value;
 
 		return this.domElement;
 	}
