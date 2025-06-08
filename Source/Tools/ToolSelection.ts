@@ -1,11 +1,11 @@
 
-class ToolSelect extends Tool
+class ToolSelection extends Tool
 {
 	layerForClipboard: Layer;
 
 	constructor()
 	{
-		super(ToolSelect.Name() );
+		super(ToolSelection.Name() );
 	}
 
 	static Name(): string { return "Select"; }
@@ -24,7 +24,8 @@ class ToolSelect extends Tool
 
 	copyOrCut(cutRatherThanCopy: boolean): void
 	{
-		var view = this.parentView;
+		var view = this.parentView();
+
 		var layerSelected = view.layerSelected();
 		var selection = view.selection;
 		var layerForClipboard = new Layer
@@ -63,11 +64,11 @@ class ToolSelect extends Tool
 
 	paste(): void
 	{
-		var view = this.parentView;
+		var view = this.parentView();
 		var layerForClipboard = this.layerForClipboard;
 		if (layerForClipboard != null)
 		{
-			var layersAll = view.layers;
+			var layersAll = view.layerGroup.layers();
 			layersAll.push(layerForClipboard);
 			this.layerForClipboard = null;
 
@@ -81,13 +82,15 @@ class ToolSelect extends Tool
 
 	processMouseDown(): void
 	{
-		var selection = this.parentView.selection;
-		var mousePos = this.parentView.mousePos;
+		var view = this.parentView();
+
+		var selection = view.selection;
+		var mousePos = view.mousePos;
 
 		if (selection.pos == null)
 		{
 			selection.pos = mousePos.clone();
-			selection.size = new Coords(0, 0);
+			selection.size = Coords.zeroes();
 			selection.isComplete = false;
 			selection.isBeingMoved = false;
 		}
@@ -100,12 +103,14 @@ class ToolSelect extends Tool
 			selection.pos = null;
 		}
 
-		this.parentView.controlUpdate();
+		view.controlUpdate();
 	}
 
 	processMouseMove(): void
 	{
-		var selection = this.parentView.selection;
+		var view = this.parentView();
+
+		var selection = view.selection;
 
 		if (selection.pos == null)
 		{
@@ -115,34 +120,36 @@ class ToolSelect extends Tool
 		{
 			selection.size.overwriteWith
 			(
-				this.parentView.mousePos
+				view.mousePos
 			).subtract
 			(
 				selection.pos
 			);
 		}
-		else if (selection.isBeingMoved == true)
+		else if (selection.isBeingMoved)
 		{
-			var mousePos = this.parentView.mousePos;
-			var mousePosPrev = this.parentView.mousePosPrev;
+			var mousePos = view.mousePos;
+			var mousePosPrev = view.mousePosPrev;
 			var mouseMove = mousePos.clone().subtract(mousePosPrev);
 			selection.pos.add(mouseMove);
 		}
 
-		this.parentView.controlUpdate();
+		view.controlUpdate();
 	}
 
 	processMouseUp(): void
 	{
-		var selection = this.parentView.selection;
+		var view = this.parentView();
+
+		var selection = view.selection;
 		selection.isComplete = true;
 
-		this.parentView.controlUpdate();
+		view.controlUpdate();
 	}
 
 	processSelection(): void
 	{
-		this.parentView.toolSelected = this;
+		this.parentView().toolSelect(this);
 	}
 
 	// controllable

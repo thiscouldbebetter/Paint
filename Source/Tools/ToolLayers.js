@@ -8,10 +8,9 @@ class ToolLayers extends Tool {
     static Name() { return "Layers"; }
     // event handlers
     layerAdd(layerToAdd) {
-        layerToAdd.parentView = this.parentView;
-        var layersAll = this.parentView.layers;
-        layersAll.push(layerToAdd);
-        //layersAll[layerToAdd.name] = layerToAdd;
+        var view = this.parentView();
+        layerToAdd.parentViewSet(view);
+        view.layerGroup.layerAdd(layerToAdd);
         this.controlUpdate();
     }
     layerAddAndSelectNew() {
@@ -19,49 +18,53 @@ class ToolLayers extends Tool {
         this.layerSelect(layerNew);
     }
     layerAddNew() {
-        var layersAll = this.parentView.layers;
+        var view = this.parentView();
+        var layersAll = view.layerGroup.layers();
         var layerNewIndex = layersAll.length;
-        var layerNew = new Layer("Layer" + layerNewIndex, this.parentView.size.clone(), new Coords(0, 0) // offset
-        );
+        var layerNew = Layer.fromNameAndSize("Layer" + layerNewIndex, view.size.clone());
         this.layerAdd(layerNew);
         return layerNew;
     }
     layerClone() {
         var layerToClone = this.layerSelected();
-        var layersAll = this.parentView.layers;
+        var view = this.parentView();
+        var layerGroup = view.layerGroup;
+        var layersAll = layerGroup.layers();
         var layerClonedName = layerToClone + "_Clone";
-        var layerCloned = new Layer(layerClonedName, layerToClone.size.clone(), null // ?
-        );
-        layerCloned.parentView = this.parentView;
+        var layerCloned = Layer.fromNameAndSize(layerClonedName, layerToClone.size.clone());
+        layerCloned.parentViewSet(view);
         var layerClonedIndex = layersAll.indexOf(layerToClone) + 1;
-        layersAll.splice(layerClonedIndex, 0, layerCloned);
-        //layersAll[layerCloned.name] = layerCloned;
+        layerGroup.layerInsertAtIndex(layerCloned, layerClonedIndex);
         this.layerIndexSelected = layerClonedIndex;
         this.controlUpdate();
     }
     layerSelect(layerToSelect) {
-        var layersAll = this.parentView.layers;
+        var view = this.parentView();
+        var layersAll = view.layerGroup.layers();
         var layerToSelectIndex = layersAll.indexOf(layerToSelect);
         this.layerSetByIndex(layerToSelectIndex);
         this.controlUpdateOffset();
-        this.parentView.controlUpdate();
+        view.controlUpdate();
     }
     layerSelected() {
-        return this.parentView.layerSelected();
+        var view = this.parentView();
+        return view.layerSelected();
     }
     layerSelectedHideOrShow() {
         var layerSelected = this.layerSelected();
         layerSelected.isVisible =
             (layerSelected.isVisible == false);
         this.controlUpdate();
-        this.parentView.controlUpdate();
+        var view = this.parentView();
+        view.controlUpdate();
     }
     layerSelectedLower(offset) {
         this.layerSelectedRaiseOrLower(-1);
     }
     layerSelectedMergeDown() {
         var layerSelected = this.layerSelected();
-        var layersAll = this.parentView.layers;
+        var view = this.parentView();
+        var layersAll = view.layerGroup.layers();
         var layerSelectedIndex = layersAll.indexOf(layerSelected);
         var layerToDrawTo;
         if (layerSelectedIndex == 0) {
@@ -85,7 +88,8 @@ class ToolLayers extends Tool {
         var layerSelectedOffset = layerSelected.offset;
         layerSelectedOffset.add(moveAmount);
         this.controlUpdateOffset();
-        this.parentView.controlUpdate();
+        var view = this.parentView();
+        view.controlUpdate();
     }
     layerSelectedMoveDown() {
         this.layerSelectedMove(new Coords(0, 1));
@@ -108,30 +112,33 @@ class ToolLayers extends Tool {
         var numberLayerSelectedOffsetY = containerOffset.childByName("numberLayerSelectedOffsetY");
         var layerSelectedOffsetY = numberLayerSelectedOffsetY.value;
         layerSelected.offset.overwriteWithDimensions(layerSelectedOffsetX, layerSelectedOffsetY);
-        this.parentView.controlUpdate();
+        var view = this.parentView();
+        view.controlUpdate();
     }
     layerSelectedRaise(offset) {
         this.layerSelectedRaiseOrLower(1);
     }
     layerSelectedRaiseOrLower(offset) {
+        var view = this.parentView();
         var layerSelected = this.layerSelected();
-        var layers = this.parentView.layers;
+        var layerGroup = view.layerGroup;
+        var layers = layerGroup.layers();
         var layerSelectedIndex = layers.indexOf(layerSelected);
         var layerSelectedIndexNext = layerSelectedIndex + offset;
         if (layerSelectedIndexNext >= 0 && layerSelectedIndexNext < layers.length) {
-            layers.splice(layerSelectedIndex, 1);
-            layers.splice(layerSelectedIndexNext, 0, layerSelected);
+            layerGroup.layerRemoveAtIndex(layerSelectedIndex);
+            layerGroup.layerInsertAtIndex(layerSelected, layerSelectedIndexNext);
             this.layerIndexSelected = layerSelectedIndexNext;
             this.controlUpdate();
-            this.parentView.controlUpdate();
+            view.controlUpdate();
         }
     }
     layerSelectedRemove() {
-        var layersAll = this.parentView.layers;
-        layersAll.splice(this.layerIndexSelected, 1);
+        var view = this.parentView();
+        view.layerGroup.layerRemoveAtIndex(this.layerIndexSelected);
         this.layerIndexSelected = 0;
         this.controlUpdate();
-        this.parentView.controlUpdate();
+        view.controlUpdate();
     }
     layerSelectedRename() {
         var layerSelected = this.layerSelected();
@@ -145,19 +152,21 @@ class ToolLayers extends Tool {
         else {
             layerSelected.name = nameToSet;
             this.controlUpdate();
-            this.parentView.controlUpdate();
+            this.parentView().controlUpdate();
         }
     }
     layerSetByIndex(valueToSet) {
         this.layerIndexSelected = valueToSet;
-        this.parentView.controlUpdate();
+        this.parentView().controlUpdate();
     }
     moveStepDistanceChanged(valueToSet) {
         this.moveStepDistance = parseInt(valueToSet);
     }
     controlUpdate() {
+        var view = this.parentView();
+        var layers = view.layerGroup.layers();
         if (this.control == null) {
-            this.selectLayer = new ControlSelectBox("selectLayer", this.parentView.layers, // options
+            this.selectLayer = new ControlSelectBox("selectLayer", layers, // options
             "name", this.layerSetByIndex.bind(this));
             var containerRename = new ControlContainer("containerRename", [
                 new ControlButton("Rename:", this.layerSelectedRename.bind(this)),
@@ -203,7 +212,7 @@ class ToolLayers extends Tool {
             this.control = returnValue;
         }
         var selectLayer = this.selectLayer;
-        selectLayer.options = this.parentView.layers;
+        selectLayer.options = layers;
         selectLayer.domElementUpdate_Options();
         selectLayer.selectedIndex = this.layerIndexSelected;
         selectLayer.domElementUpdate();

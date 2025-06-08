@@ -1,9 +1,9 @@
 "use strict";
 class ControlCanvas extends Control {
-    constructor(name, size, layers, mousedown, mousemove, mouseout, mouseover, mouseup) {
+    constructor(name, size, layerGroup, mousedown, mousemove, mouseout, mouseover, mouseup) {
         super(name);
         this.size = size;
-        this.layers = layers;
+        this.layerGroup = layerGroup;
         this.mousedown = mousedown;
         this.mousemove = mousemove;
         this.mouseout = mouseout;
@@ -29,9 +29,10 @@ class ControlCanvas extends Control {
             de.ontouchend = this.handleEventTouchEnd.bind(this);
         }
         this.display.clear();
-        for (var i = 0; i < this.layers.length; i++) {
-            var layer = this.layers[i];
-            if (layer.isVisible == true) {
+        var layers = this.layerGroup.layers();
+        for (var i = 0; i < layers.length; i++) {
+            var layer = layers[i];
+            if (layer.isVisible) {
                 this.display.drawOther(layer.display, layer.offset, null, null // ?
                 );
             }

@@ -3,27 +3,19 @@ class View {
     constructor(size, toolNameToSelectInitial, tools) {
         this.size = size;
         this.tools = tools;
-        for (var i = 0; i < this.tools.length; i++) {
-            var tool = this.tools[i];
-            tool.parentView = this;
-        }
-        this.toolSelected = this.toolByName(toolNameToSelectInitial);
-        this.layers =
-            [
-                new Layer("Layer0", size, new Coords(0, 0)),
-            ];
-        for (var i = 0; i < this.layers.length; i++) {
-            var layer = this.layers[i];
-            layer.parentView = this;
-        }
+        this.tools.forEach(x => x.parentViewSet(this));
+        var toolInitial = this.toolByName(toolNameToSelectInitial);
+        this.toolSelect(toolInitial);
+        this.layerGroup =
+            LayerGroup.fromSize(size).parentViewSet(this);
         this.isMouseDown = false;
-        this.mousePos = new Coords(0, 0);
-        this.mousePosPrev = new Coords(0, 0);
+        this.mousePos = Coords.zeroes();
+        this.mousePosPrev = Coords.zeroes();
         this.selection = Selection_.create();
     }
     // static methods
     static imageURLForAlphaZeroBuild() {
-        var imageSizeInPixels = new Coords(32, 32);
+        var imageSizeInPixels = Coords.ones().multiplyScalar(32);
         var imageSizeInPixelsHalf = imageSizeInPixels.clone().divideScalar(2);
         var canvas = document.createElement("canvas");
         canvas.width = imageSizeInPixels.x;
@@ -43,13 +35,20 @@ class View {
     // instance methods
     layerSelected() {
         var layerIndexSelected = this.toolLayers().layerIndexSelected;
-        var returnValue = this.layers[layerIndexSelected];
+        var returnValue = this.layerGroup.layerAtIndex(layerIndexSelected);
         return returnValue;
     }
     toolByName(name) {
         return this.tools.find(x => x.name == name);
     }
-    // Tools.
+    toolSelect(toolToSelect) {
+        this._toolSelected = toolToSelect;
+        return this;
+    }
+    toolSelected() {
+        return this._toolSelected;
+    }
+    // Particular tools.
     toolBrushSize() {
         return this.toolByName(ToolBrushSize.Name());
     }
@@ -68,8 +67,8 @@ class View {
     toolPaint() {
         return this.toolByName(ToolPaint.Name());
     }
-    toolSelect() {
-        return this.toolByName(ToolSelect.Name());
+    toolSelection() {
+        return this.toolByName(ToolSelection.Name());
     }
     toolViewSize() {
         return this.toolByName(ToolViewSize.Name());
@@ -81,7 +80,8 @@ class View {
         this.mousePos.overwriteWithDimensions(event.clientX - boundingClientRect.left, event.clientY - boundingClientRect.top);
         this.mousePosPrev.overwriteWith(this.mousePos);
         this.isMouseDown = true;
-        this.toolSelected.processMouseDown();
+        var toolSelected = this.toolSelected();
+        toolSelected.processMouseDown();
     }
     processMouseOver(event) {
         // Do nothing.
@@ -94,7 +94,8 @@ class View {
             this.mousePosPrev.overwriteWith(this.mousePos);
             var boundingClientRect = event.target.getBoundingClientRect();
             this.mousePos.overwriteWithDimensions(event.clientX - boundingClientRect.left, event.clientY - boundingClientRect.top);
-            this.toolSelected.processMouseMove();
+            var toolSelected = this.toolSelected();
+            toolSelected.processMouseMove();
         }
     }
     processMouseUp(event) {
@@ -102,8 +103,9 @@ class View {
     }
     controlUpdate() {
         if (this.control == null) {
-            this.controlCanvas = new ControlCanvas("viewCanvas", this.size, this.layers, this.processMouseDown.bind(this), this.processMouseMove.bind(this), this.processMouseOut.bind(this), this.processMouseOver.bind(this), this.processMouseUp.bind(this));
-            var containerTools = new ControlContainer("containerTools", Control.controllablesToControls(this.tools));
+            this.controlCanvas = new ControlCanvas("viewCanvas", this.size, this.layerGroup, this.processMouseDown.bind(this), this.processMouseMove.bind(this), this.processMouseOut.bind(this), this.processMouseOver.bind(this), this.processMouseUp.bind(this));
+            var toolsAsControls = Control.controllablesToControls(this.tools);
+            var containerTools = new ControlContainer("containerTools", toolsAsControls);
             var containerView = new ControlContainer("containerView", [
                 this.controlCanvas,
                 containerTools,

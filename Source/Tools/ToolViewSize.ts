@@ -12,26 +12,29 @@ class ToolViewSize extends Tool
 
 	viewSizeXChanged(valueToSet: number): void
 	{
-		this.parentView.size.x = valueToSet;
+		this.parentView().size.x = valueToSet;
 		this.viewSizeSet();
 	}
 
 	viewSizeYChanged(valueToSet: number): void
 	{
-		this.parentView.size.y = valueToSet;
+		this.parentView().size.y = valueToSet;
 		this.viewSizeSet();
 	}
 
 	viewSizeSet(): void
 	{
-		var size = this.parentView.size;
+		var view = this.parentView();
 
-		var layers = this.parentView.layers;
+		var size = view.size;
 
-		var control = this.parentView.control as ControlContainer;
-		var viewCanvas = control.childByName("viewCanvas") as ControlCanvas;
+		var control = view.control as ControlContainer;
+		var viewCanvas =
+			control.childByName("viewCanvas") as ControlCanvas;
 		var displayMain = viewCanvas.display;
 		displayMain.sizeSet(size);
+
+		var layers = view.layerGroup.layers();
 
 		for (var i = 0; i < layers.length; i++)
 		{
@@ -51,7 +54,7 @@ class ToolViewSize extends Tool
 	{
 		if (this.control == null)
 		{
-			var size = this.parentView.size;
+			var size = this.parentView().size;
 
 			var returnValue = new ControlContainer
 			(

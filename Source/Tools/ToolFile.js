@@ -10,7 +10,8 @@ class ToolFile extends Tool {
         this.fileNameToSaveAs = value;
     }
     processSaveAsPNG(event) {
-        var control = this.parentView.control;
+        var view = this.parentView();
+        var control = view.control;
         var controlCanvas = control.childByName("viewCanvas");
         var canvas = controlCanvas.display.canvas;
         var imageFromCanvasURL = canvas.toDataURL("image/png");
@@ -18,7 +19,8 @@ class ToolFile extends Tool {
         var imageAsArrayBuffer = new ArrayBuffer(imageAsByteString.length);
         var imageAsArrayUnsigned = new Uint8Array(imageAsArrayBuffer);
         for (var i = 0; i < imageAsByteString.length; i++) {
-            imageAsArrayUnsigned[i] = imageAsByteString.charCodeAt(i);
+            imageAsArrayUnsigned[i] =
+                imageAsByteString.charCodeAt(i);
         }
         var imageAsBlob = new Blob([imageAsArrayBuffer], { type: "image/png" });
         var fileNameToSaveAs = this.fileNameToSaveAs;
@@ -36,7 +38,8 @@ class ToolFile extends Tool {
             fileNameToSaveAs += ".tar";
         }
         var layersAsTarFile = TarFile.fromName(fileNameToSaveAs);
-        var layers = this.parentView.layers;
+        var view = this.parentView();
+        var layers = view.layerGroup.layers();
         for (var i = 0; i < layers.length; i++) {
             var layer = layers[i];
             var canvas = layer.display.canvas;
@@ -97,7 +100,7 @@ class ToolFile extends Tool {
             imageLoadedAsDisplay.initialize();
             var graphics = imageLoadedAsDisplay.canvas.getContext("2d");
             graphics.drawImage(imageLoadedAsImgElement, 0, 0);
-            var view = this.parentView;
+            var view = this.parentView();
             var toolLayers = view.toolLayers();
             toolLayers.layerAddNew();
             var layerNew = view.layerSelected();

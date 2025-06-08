@@ -7,6 +7,12 @@ class Coords {
     static create() {
         return new Coords(0, 0);
     }
+    static ones() {
+        return new Coords(1, 1);
+    }
+    static zeroes() {
+        return new Coords(0, 0);
+    }
     static Instances() {
         if (Coords._instances == null) {
             Coords._instances = new Coords_Instances();
@@ -73,6 +79,6 @@ class Coords {
 }
 class Coords_Instances {
     constructor() {
-        this.Zeroes = new Coords(0, 0);
+        this.Zeroes = Coords.zeroes();
     }
 }

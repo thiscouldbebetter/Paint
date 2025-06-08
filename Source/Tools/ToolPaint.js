@@ -9,17 +9,22 @@ class ToolPaint extends Tool {
         // Do nothing.
     }
     processMouseMove() {
-        var layerSelected = this.parentView.layerSelected();
+        var view = this.parentView();
+        var layerSelected = view.layerSelected();
         var layerSelectedOffset = layerSelected.offset;
-        var posFrom = this.parentView.mousePosPrev.clone().subtract(layerSelectedOffset);
-        var posTo = this.parentView.mousePos.clone().subtract(layerSelectedOffset);
-        var toolColorPalette = this.parentView.toolColorPalette();
-        var toolBrushSize = this.parentView.toolBrushSize();
+        var posFrom = view.mousePosPrev
+            .clone()
+            .subtract(layerSelectedOffset);
+        var posTo = view.mousePos
+            .clone()
+            .subtract(layerSelectedOffset);
+        var toolColorPalette = view.toolColorPalette();
+        var toolBrushSize = view.toolBrushSize();
         layerSelected.display.drawLine(posFrom, posTo, toolColorPalette.colorSelected, toolBrushSize.brushSizeSelected);
-        this.parentView.controlUpdate();
+        view.controlUpdate();
     }
     processSelection() {
-        this.parentView.toolSelected = this;
+        this.parentView().toolSelect(this);
     }
     // Controllable.
     controlUpdate() {

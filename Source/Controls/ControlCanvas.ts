@@ -2,7 +2,7 @@
 class ControlCanvas extends Control
 {
 	size: Coords;
-	layers: Layer[]; 
+	layerGroup: LayerGroup; 
 	mousedown: any; 
 	mousemove: any; 
 	mouseout: any;
@@ -15,7 +15,7 @@ class ControlCanvas extends Control
 	(
 		name: string, 
 		size: Coords, 
-		layers: Layer[], 
+		layerGroup: LayerGroup, 
 		mousedown: any, 
 		mousemove: any, 
 		mouseout: any, 
@@ -26,7 +26,7 @@ class ControlCanvas extends Control
 		super(name);
 
 		this.size = size;
-		this.layers = layers;
+		this.layerGroup = layerGroup;
 
 		this.mousedown = mousedown;
 		this.mousemove = mousemove;
@@ -61,10 +61,11 @@ class ControlCanvas extends Control
 
 		this.display.clear();
 
-		for (var i = 0; i < this.layers.length; i++)
+		var layers = this.layerGroup.layers();
+		for (var i = 0; i < layers.length; i++)
 		{
-			var layer = this.layers[i];
-			if (layer.isVisible == true)
+			var layer = layers[i];
+			if (layer.isVisible)
 			{
 				this.display.drawOther
 				(

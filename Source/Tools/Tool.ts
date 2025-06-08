@@ -2,11 +2,22 @@
 class Tool implements Controllable
 {
 	name: string;
-	parentView: View;
+	_parentView: View;
 
 	constructor(name: string)
 	{
 		this.name = name;
+	}
+
+	parentView(): View
+	{
+		return this._parentView;
+	}
+
+	parentViewSet(value: View): Tool
+	{
+		this._parentView = value;
+		return this;
 	}
 
 	// Controllable.

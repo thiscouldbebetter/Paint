@@ -15,6 +15,16 @@ class Coords
 		return new Coords(0, 0);
 	}
 
+	static ones(): Coords
+	{
+		return new Coords(1, 1);
+	}
+
+	static zeroes(): Coords
+	{
+		return new Coords(0, 0);
+	}
+
 	// instances
 
 	static _instances: Coords_Instances;
@@ -120,6 +130,6 @@ class Coords_Instances
 
 	constructor()
 	{
-		this.Zeroes = new Coords(0, 0);
+		this.Zeroes = Coords.zeroes();
 	}
 }

@@ -17,11 +17,10 @@ class ToolLayers extends Tool
 
 	layerAdd(layerToAdd: Layer): void
 	{
-		layerToAdd.parentView = this.parentView;
+		var view = this.parentView();
+		layerToAdd.parentViewSet(view);
 
-		var layersAll = this.parentView.layers;
-		layersAll.push(layerToAdd);
-		//layersAll[layerToAdd.name] = layerToAdd;
+		view.layerGroup.layerAdd(layerToAdd);
 
 		this.controlUpdate();
 	}
@@ -34,13 +33,13 @@ class ToolLayers extends Tool
 
 	layerAddNew(): Layer
 	{
-		var layersAll = this.parentView.layers;
+		var view = this.parentView();
+		var layersAll = view.layerGroup.layers();
 		var layerNewIndex = layersAll.length;
-		var layerNew = new Layer
+		var layerNew = Layer.fromNameAndSize
 		(
 			"Layer" + layerNewIndex, 
-			this.parentView.size.clone(),
-			new Coords(0, 0) // offset
+			view.size.clone()
 		);
 		this.layerAdd(layerNew);
 		return layerNew;
@@ -49,18 +48,18 @@ class ToolLayers extends Tool
 	layerClone(): void
 	{
 		var layerToClone = this.layerSelected();
-		var layersAll = this.parentView.layers;
+		var view = this.parentView();
+		var layerGroup = view.layerGroup;
+		var layersAll = layerGroup.layers();
 		var layerClonedName = layerToClone + "_Clone";
-		var layerCloned = new Layer
+		var layerCloned = Layer.fromNameAndSize
 		(
 			layerClonedName,
-			layerToClone.size.clone(),
-			null // ?
+			layerToClone.size.clone()
 		);
-		layerCloned.parentView = this.parentView;
+		layerCloned.parentViewSet(view);
 		var layerClonedIndex = layersAll.indexOf(layerToClone) + 1;
-		layersAll.splice(layerClonedIndex, 0, layerCloned);
-		//layersAll[layerCloned.name] = layerCloned;
+		layerGroup.layerInsertAtIndex(layerCloned, layerClonedIndex);
 
 		this.layerIndexSelected = layerClonedIndex;
 
@@ -69,17 +68,19 @@ class ToolLayers extends Tool
 
 	layerSelect(layerToSelect: Layer): void
 	{
-		var layersAll = this.parentView.layers;
+		var view = this.parentView();
+		var layersAll = view.layerGroup.layers();
 		var layerToSelectIndex = layersAll.indexOf(layerToSelect);
 		this.layerSetByIndex(layerToSelectIndex);
 
 		this.controlUpdateOffset();
-		this.parentView.controlUpdate();
+		view.controlUpdate();
 	}
 
 	layerSelected(): Layer
 	{
-		return this.parentView.layerSelected();
+		var view = this.parentView();
+		return view.layerSelected();
 	}
 
 	layerSelectedHideOrShow(): void
@@ -88,7 +89,8 @@ class ToolLayers extends Tool
 		layerSelected.isVisible =
 			(layerSelected.isVisible == false);
 		this.controlUpdate();
-		this.parentView.controlUpdate();
+		var view = this.parentView();
+		view.controlUpdate();
 	}
 
 	layerSelectedLower(offset: Coords): void
@@ -99,7 +101,8 @@ class ToolLayers extends Tool
 	layerSelectedMergeDown(): void
 	{
 		var layerSelected = this.layerSelected();
-		var layersAll = this.parentView.layers;
+		var view = this.parentView();
+		var layersAll = view.layerGroup.layers();
 		var layerSelectedIndex = layersAll.indexOf(layerSelected);
 
 		var layerToDrawTo;
@@ -140,7 +143,8 @@ class ToolLayers extends Tool
 		layerSelectedOffset.add(moveAmount);
 
 		this.controlUpdateOffset();
-		this.parentView.controlUpdate();
+		var view = this.parentView();
+		view.controlUpdate();
 	}
 
 	layerSelectedMoveDown(): void
@@ -172,12 +176,18 @@ class ToolLayers extends Tool
 			control.childByName("containerOffset") as ControlContainer;
 
 		var numberLayerSelectedOffsetX =
-			containerOffset.childByName("numberLayerSelectedOffsetX") as ControlNumberBox;
+			containerOffset.childByName
+			(
+				"numberLayerSelectedOffsetX"
+			) as ControlNumberBox;
 		var layerSelectedOffsetX =
 			numberLayerSelectedOffsetX.value;
 
 		var numberLayerSelectedOffsetY =
-			containerOffset.childByName("numberLayerSelectedOffsetY") as ControlNumberBox;
+			containerOffset.childByName
+			(
+				"numberLayerSelectedOffsetY"
+			) as ControlNumberBox;
 		var layerSelectedOffsetY =
 			numberLayerSelectedOffsetY.value;
 
@@ -187,7 +197,8 @@ class ToolLayers extends Tool
 			layerSelectedOffsetY
 		);
 
-		this.parentView.controlUpdate();
+		var view = this.parentView();
+		view.controlUpdate();
 	}
 
 	layerSelectedRaise(offset: number): void
@@ -197,38 +208,48 @@ class ToolLayers extends Tool
 
 	layerSelectedRaiseOrLower(offset: number): void
 	{
+		var view = this.parentView();
+
 		var layerSelected = this.layerSelected();
 
-		var layers = this.parentView.layers;
-		var layerSelectedIndex = layers.indexOf(layerSelected);
+		var layerGroup = view.layerGroup;
+		var layers = layerGroup.layers();
+		var layerSelectedIndex =
+			layers.indexOf(layerSelected);
 		var layerSelectedIndexNext = layerSelectedIndex + offset;
 		if (layerSelectedIndexNext >= 0 && layerSelectedIndexNext < layers.length)
 		{
-			layers.splice(layerSelectedIndex, 1);
-			layers.splice(layerSelectedIndexNext, 0, layerSelected);
+			layerGroup.layerRemoveAtIndex(layerSelectedIndex);
+			layerGroup.layerInsertAtIndex(layerSelected, layerSelectedIndexNext);
 			this.layerIndexSelected = layerSelectedIndexNext;
 			this.controlUpdate();
-			this.parentView.controlUpdate();
+			view.controlUpdate();
 		}
 	}
 
 	layerSelectedRemove(): void
 	{
-		var layersAll = this.parentView.layers;
-		layersAll.splice(this.layerIndexSelected, 1);
+		var view = this.parentView();
+
+		view.layerGroup.layerRemoveAtIndex
+		(
+			this.layerIndexSelected
+		);
 
 		this.layerIndexSelected = 0;
 
 		this.controlUpdate();
-		this.parentView.controlUpdate();
+		view.controlUpdate();
 	}
 
 	layerSelectedRename(): void
 	{
 		var layerSelected = this.layerSelected();
 		var control = this.control as ControlContainer;
-		var containerRename = control.childByName("containerRename") as ControlContainer;
-		var textName = containerRename.childByName("textName") as ControlTextBox;
+		var containerRename =
+			control.childByName("containerRename") as ControlContainer;
+		var textName =
+			containerRename.childByName("textName") as ControlTextBox;
 		var nameToSet = textName.value;
 		if (nameToSet == "")
 		{
@@ -239,14 +260,14 @@ class ToolLayers extends Tool
 			layerSelected.name = nameToSet;
 
 			this.controlUpdate();
-			this.parentView.controlUpdate();
+			this.parentView().controlUpdate();
 		}
 	}
 
 	layerSetByIndex(valueToSet: number): void
 	{
 		this.layerIndexSelected = valueToSet;
-		this.parentView.controlUpdate();
+		this.parentView().controlUpdate();
 	}
 
 	moveStepDistanceChanged(valueToSet: string): void
@@ -260,12 +281,15 @@ class ToolLayers extends Tool
 
 	controlUpdate(): Control
 	{
+		var view = this.parentView();
+		var layers = view.layerGroup.layers();
+
 		if (this.control == null)
 		{
 			this.selectLayer = new ControlSelectBox
 			(
 				"selectLayer",
-				this.parentView.layers, // options
+				layers, // options
 				"name",
 				this.layerSetByIndex.bind(this)
 			);
@@ -425,7 +449,7 @@ class ToolLayers extends Tool
 
 		var selectLayer = this.selectLayer;
 
-		selectLayer.options = this.parentView.layers;
+		selectLayer.options = layers;
 		selectLayer.domElementUpdate_Options();
 		selectLayer.selectedIndex = this.layerIndexSelected;
 		selectLayer.domElementUpdate();

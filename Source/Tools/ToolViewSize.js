@@ -6,20 +6,21 @@ class ToolViewSize extends Tool {
     static Name() { return "ViewSize"; }
     // event handlers
     viewSizeXChanged(valueToSet) {
-        this.parentView.size.x = valueToSet;
+        this.parentView().size.x = valueToSet;
         this.viewSizeSet();
     }
     viewSizeYChanged(valueToSet) {
-        this.parentView.size.y = valueToSet;
+        this.parentView().size.y = valueToSet;
         this.viewSizeSet();
     }
     viewSizeSet() {
-        var size = this.parentView.size;
-        var layers = this.parentView.layers;
-        var control = this.parentView.control;
+        var view = this.parentView();
+        var size = view.size;
+        var control = view.control;
         var viewCanvas = control.childByName("viewCanvas");
         var displayMain = viewCanvas.display;
         displayMain.sizeSet(size);
+        var layers = view.layerGroup.layers();
         for (var i = 0; i < layers.length; i++) {
             var layer = layers[i];
             layer.display.sizeSet(size);
@@ -30,7 +31,7 @@ class ToolViewSize extends Tool {
     // control
     controlUpdate() {
         if (this.control == null) {
-            var size = this.parentView.size;
+            var size = this.parentView().size;
             var returnValue = new ControlContainer("controlToolViewSize", [
                 new ControlLabel("Canvas Size:"),
                 new ControlNumberBox("numberViewSizeX", size.x, this.viewSizeXChanged.bind(this), null // max

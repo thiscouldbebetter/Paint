@@ -20,18 +20,25 @@ class ToolFile extends Tool
 
 	processSaveAsPNG(event: any): void
 	{
-		var control = this.parentView.control as ControlContainer;
-		var controlCanvas = control.childByName("viewCanvas") as ControlCanvas;
+		var view = this.parentView();
+		var control = view.control as ControlContainer;
+		var controlCanvas =
+			control.childByName("viewCanvas") as ControlCanvas;
 		var canvas = controlCanvas.display.canvas;
 
-		var imageFromCanvasURL = canvas.toDataURL("image/png");
+		var imageFromCanvasURL =
+			canvas.toDataURL("image/png");
 
-		var imageAsByteString = atob(imageFromCanvasURL.split(',')[1]);
-		var imageAsArrayBuffer = new ArrayBuffer(imageAsByteString.length);
-		var imageAsArrayUnsigned = new Uint8Array(imageAsArrayBuffer);
+		var imageAsByteString =
+			atob(imageFromCanvasURL.split(',')[1]);
+		var imageAsArrayBuffer =
+			new ArrayBuffer(imageAsByteString.length);
+		var imageAsArrayUnsigned =
+			new Uint8Array(imageAsArrayBuffer);
 		for (var i = 0; i < imageAsByteString.length; i++) 
 		{
-			imageAsArrayUnsigned[i] = imageAsByteString.charCodeAt(i);
+			imageAsArrayUnsigned[i] =
+				imageAsByteString.charCodeAt(i);
 		}
 
 		var imageAsBlob = new Blob([imageAsArrayBuffer], {type:"image/png"});
@@ -58,7 +65,8 @@ class ToolFile extends Tool
 
 		var layersAsTarFile = TarFile.fromName(fileNameToSaveAs);
 
-		var layers = this.parentView.layers;
+		var view = this.parentView();
+		var layers = view.layerGroup.layers();
 
 		for (var i = 0; i < layers.length; i++)
 		{
@@ -194,7 +202,7 @@ class ToolFile extends Tool
 			var graphics = imageLoadedAsDisplay.canvas.getContext("2d");
 			graphics.drawImage(imageLoadedAsImgElement, 0, 0);
 
-			var view = this.parentView;
+			var view = this.parentView();
 			var toolLayers = view.toolLayers();
 			toolLayers.layerAddNew();
 			var layerNew = view.layerSelected();

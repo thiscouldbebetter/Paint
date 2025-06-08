@@ -6,13 +6,14 @@ class ToolFill extends Tool {
     static Name() { return "Fill"; }
     // event handlers
     processSelection() {
-        var layerSelected = this.parentView.layerSelected();
+        var view = this.parentView();
+        var layerSelected = view.layerSelected();
         var display = layerSelected.display;
-        var color = this.parentView.toolColorPalette().colorSelected;
-        var size = this.parentView.size;
+        var color = view.toolColorPalette().colorSelected;
+        var size = view.size;
         display.drawRectangle(Coords.Instances().Zeroes, size, color, null // ?
         );
-        this.parentView.controlUpdate();
+        view.controlUpdate();
     }
     // controllable
     controlUpdate() {

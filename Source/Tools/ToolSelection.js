@@ -1,7 +1,7 @@
 "use strict";
-class ToolSelect extends Tool {
+class ToolSelection extends Tool {
     constructor() {
-        super(ToolSelect.Name());
+        super(ToolSelection.Name());
     }
     static Name() { return "Select"; }
     // event handlers
@@ -12,7 +12,7 @@ class ToolSelect extends Tool {
         this.copyOrCut(true);
     }
     copyOrCut(cutRatherThanCopy) {
-        var view = this.parentView;
+        var view = this.parentView();
         var layerSelected = view.layerSelected();
         var selection = view.selection;
         var layerForClipboard = new Layer("layerClipboard", selection.size.clone(), new Coords(0, 0) // offset
@@ -27,10 +27,10 @@ class ToolSelect extends Tool {
         view.controlUpdate();
     }
     paste() {
-        var view = this.parentView;
+        var view = this.parentView();
         var layerForClipboard = this.layerForClipboard;
         if (layerForClipboard != null) {
-            var layersAll = view.layers;
+            var layersAll = view.layerGroup.layers();
             layersAll.push(layerForClipboard);
             this.layerForClipboard = null;
             var toolLayers = view.toolLayers();
@@ -40,11 +40,12 @@ class ToolSelect extends Tool {
         }
     }
     processMouseDown() {
-        var selection = this.parentView.selection;
-        var mousePos = this.parentView.mousePos;
+        var view = this.parentView();
+        var selection = view.selection;
+        var mousePos = view.mousePos;
         if (selection.pos == null) {
             selection.pos = mousePos.clone();
-            selection.size = new Coords(0, 0);
+            selection.size = Coords.zeroes();
             selection.isComplete = false;
             selection.isBeingMoved = false;
         }
@@ -54,31 +55,33 @@ class ToolSelect extends Tool {
         else {
             selection.pos = null;
         }
-        this.parentView.controlUpdate();
+        view.controlUpdate();
     }
     processMouseMove() {
-        var selection = this.parentView.selection;
+        var view = this.parentView();
+        var selection = view.selection;
         if (selection.pos == null) {
             // do nothing
         }
         else if (selection.isComplete == false) {
-            selection.size.overwriteWith(this.parentView.mousePos).subtract(selection.pos);
+            selection.size.overwriteWith(view.mousePos).subtract(selection.pos);
         }
-        else if (selection.isBeingMoved == true) {
-            var mousePos = this.parentView.mousePos;
-            var mousePosPrev = this.parentView.mousePosPrev;
+        else if (selection.isBeingMoved) {
+            var mousePos = view.mousePos;
+            var mousePosPrev = view.mousePosPrev;
             var mouseMove = mousePos.clone().subtract(mousePosPrev);
             selection.pos.add(mouseMove);
         }
-        this.parentView.controlUpdate();
+        view.controlUpdate();
     }
     processMouseUp() {
-        var selection = this.parentView.selection;
+        var view = this.parentView();
+        var selection = view.selection;
         selection.isComplete = true;
-        this.parentView.controlUpdate();
+        view.controlUpdate();
     }
     processSelection() {
-        this.parentView.toolSelected = this;
+        this.parentView().toolSelect(this);
     }
     // controllable
     controlUpdate() {

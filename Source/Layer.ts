@@ -8,7 +8,7 @@ class Layer
 	isVisible: boolean;
 
 	display: Display;
-	parentView: View;
+	_parentView: View;
 
 	constructor(name: string, size: Coords, offset: Coords)
 	{
@@ -20,5 +20,21 @@ class Layer
 
 		this.display = new Display(size);
 		this.display.initialize();
+	}
+
+	static fromNameAndSize(name: string, size: Coords): Layer
+	{
+		return new Layer(name, size, Coords.zeroes() );
+	}
+
+	parentView(): View
+	{
+		return this._parentView;
+	}
+
+	parentViewSet(value: View): Layer
+	{
+		this._parentView = value;
+		return this;
 	}
 }

@@ -4,8 +4,8 @@ class View
 	size: Coords;
 	tools: Tool[];
 
-	toolSelected: Tool;
-	layers: Layer[];
+	_toolSelected: Tool;
+	layerGroup: LayerGroup;
 	selection: Selection_;
 
 	isMouseDown: boolean;
@@ -22,28 +22,17 @@ class View
 		this.size = size;
 		this.tools = tools;
 
-		for (var i = 0; i < this.tools.length; i++)
-		{
-			var tool = this.tools[i];
-			tool.parentView = this;
-		}
+		this.tools.forEach(x => x.parentViewSet(this) );
 
-		this.toolSelected = this.toolByName(toolNameToSelectInitial);
+		var toolInitial = this.toolByName(toolNameToSelectInitial);
+		this.toolSelect(toolInitial);
 
-		this.layers = 
-		[
-			new Layer("Layer0", size, new Coords(0, 0)),
-		];
-
-		for (var i = 0; i < this.layers.length; i++)
-		{
-			var layer = this.layers[i];
-			layer.parentView = this;
-		}
+		this.layerGroup =
+			LayerGroup.fromSize(size).parentViewSet(this);
 
 		this.isMouseDown = false;
-		this.mousePos = new Coords(0, 0);
-		this.mousePosPrev = new Coords(0, 0);
+		this.mousePos = Coords.zeroes();
+		this.mousePosPrev = Coords.zeroes();
 
 		this.selection = Selection_.create();
 	}
@@ -52,8 +41,11 @@ class View
 
 	static imageURLForAlphaZeroBuild(): string
 	{
-		var imageSizeInPixels = new Coords(32, 32);
-		var imageSizeInPixelsHalf = imageSizeInPixels.clone().divideScalar(2);
+		var imageSizeInPixels =
+			Coords.ones().multiplyScalar(32);
+
+		var imageSizeInPixelsHalf =
+			imageSizeInPixels.clone().divideScalar(2);
 
 		var canvas = document.createElement("canvas");
 		canvas.width = imageSizeInPixels.x;
@@ -92,8 +84,10 @@ class View
 
 	layerSelected(): Layer
 	{
-		var layerIndexSelected = this.toolLayers().layerIndexSelected;
-		var returnValue = this.layers[layerIndexSelected]; 
+		var layerIndexSelected =
+			this.toolLayers().layerIndexSelected;
+		var returnValue =
+			this.layerGroup.layerAtIndex(layerIndexSelected); 
 		return returnValue;
 	}
 
@@ -102,7 +96,18 @@ class View
 		return this.tools.find(x => x.name == name);
 	}
 
-	// Tools.
+	toolSelect(toolToSelect: Tool): View
+	{
+		this._toolSelected = toolToSelect;
+		return this;
+	}
+
+	toolSelected(): Tool
+	{
+		return this._toolSelected;
+	}
+
+	// Particular tools.
 
 	toolBrushSize(): ToolBrushSize
 	{
@@ -134,9 +139,9 @@ class View
 		return this.toolByName(ToolPaint.Name() ) as unknown as ToolPaint;
 	}
 
-	toolSelect(): ToolSelect
+	toolSelection(): ToolSelection
 	{
-		return this.toolByName(ToolSelect.Name() ) as unknown as ToolSelect;
+		return this.toolByName(ToolSelection.Name() ) as unknown as ToolSelection;
 	}
 
 	toolViewSize(): ToolViewSize
@@ -159,7 +164,8 @@ class View
 		);
 		this.mousePosPrev.overwriteWith(this.mousePos);
 		this.isMouseDown = true;
-		this.toolSelected.processMouseDown();
+		var toolSelected = this.toolSelected();
+		toolSelected.processMouseDown();
 	}
 
 	processMouseOver(event: any): void
@@ -184,7 +190,8 @@ class View
 				event.clientX - boundingClientRect.left,
 				event.clientY - boundingClientRect.top
 			);
-			this.toolSelected.processMouseMove();
+			var toolSelected = this.toolSelected();
+			toolSelected.processMouseMove();
 		}
 	}
 
@@ -206,7 +213,7 @@ class View
 			(
 				"viewCanvas",
 				this.size,
-				this.layers,
+				this.layerGroup,
 				this.processMouseDown.bind(this),
 				this.processMouseMove.bind(this),
 				this.processMouseOut.bind(this),
@@ -214,10 +221,13 @@ class View
 				this.processMouseUp.bind(this)
 			);
 
+			var toolsAsControls =
+				Control.controllablesToControls(this.tools);
+
 			var containerTools = new ControlContainer
 			(
 				"containerTools",
-				Control.controllablesToControls(this.tools)
+				toolsAsControls
 			);
 
 			var containerView = new ControlContainer

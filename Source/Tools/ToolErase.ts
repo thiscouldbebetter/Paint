@@ -17,13 +17,21 @@ class ToolErase extends Tool
 
 	processMouseMove(): void
 	{
-		var layerSelected = this.parentView.layerSelected();
+		var view = this.parentView();
+
+		var layerSelected = view.layerSelected();
 
 		var layerSelectedOffset = layerSelected.offset;
-		var posFrom = this.parentView.mousePosPrev.clone().subtract(layerSelectedOffset);
-		var posTo = this.parentView.mousePos.clone().subtract(layerSelectedOffset);
+		var posFrom =
+			view.mousePosPrev
+				.clone()
+				.subtract(layerSelectedOffset);
+		var posTo =
+			view.mousePos
+				.clone()
+				.subtract(layerSelectedOffset);
 
-		var toolBrushSize = this.parentView.toolBrushSize();
+		var toolBrushSize = view.toolBrushSize();
 
 		layerSelected.display.clearLine
 		(
@@ -32,12 +40,12 @@ class ToolErase extends Tool
 			toolBrushSize.brushSizeSelected
 		);
 
-		this.parentView.controlUpdate();
+		view.controlUpdate();
 	}
 
 	processSelection(): void
 	{
-		this.parentView.toolSelected = this;
+		this.parentView().toolSelect(this);
 	}
 
 	// Controllable.
